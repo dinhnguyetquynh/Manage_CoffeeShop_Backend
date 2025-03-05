@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AuthenticationRes {
+    private String token;
     private boolean authenticated;
 }

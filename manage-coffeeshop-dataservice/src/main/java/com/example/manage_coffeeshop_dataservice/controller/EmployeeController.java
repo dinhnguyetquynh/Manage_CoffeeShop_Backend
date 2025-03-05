@@ -7,6 +7,8 @@ import com.example.manage_coffeeshop_dataservice.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/employee")
 public class EmployeeController {
@@ -23,6 +25,11 @@ public class EmployeeController {
 
     @GetMapping
     public Employee getEmployeeByName(@RequestParam String name){
-        return employeeRepository.findByEmpName(name);
+        return employeeRepository.findByEmpAccount(name);
+    }
+
+    @GetMapping("/list")
+    public List<Employee> getAllEmployee(){
+        return employeeRepository.findAll();
     }
 }
