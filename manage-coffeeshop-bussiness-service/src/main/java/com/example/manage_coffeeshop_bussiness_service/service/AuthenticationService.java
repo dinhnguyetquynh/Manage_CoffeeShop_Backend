@@ -38,11 +38,12 @@ public class AuthenticationService {
     protected String SIGNER_KEY ;
 
     public AuthenticationService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/employee").build();
+        this.webClient = webClientBuilder.baseUrl("http://localhost:8" +
+                "080/myapp/api/employee").build();
     }
 
 
-
+    //xác thực và tạo token khi đăng nhập
     public AuthenticationRes authenticate(AuthenticationRequest req) {
         EmployeeRes emp = findEmployeeById(req);
         if(emp == null) {

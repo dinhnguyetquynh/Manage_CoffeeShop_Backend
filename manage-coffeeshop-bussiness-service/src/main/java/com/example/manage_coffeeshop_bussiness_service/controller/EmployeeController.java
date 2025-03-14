@@ -1,6 +1,7 @@
 package com.example.manage_coffeeshop_bussiness_service.controller;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.EmployeeReq;
+import com.example.manage_coffeeshop_bussiness_service.dto.request.EmployeeUpdateReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.EmployeeRes;
 import com.example.manage_coffeeshop_bussiness_service.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,10 @@ public class EmployeeController {
     @GetMapping
     public List<EmployeeRes> getAllEmployees() {
         return employeeService.getAllEmployees();
+    }
+
+    @PutMapping("/{empId}")
+    public EmployeeRes updateEmployee(@PathVariable int empId,@RequestBody EmployeeUpdateReq req) {
+        return employeeService.updateEmployee(empId,req);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.EmployeeReq;
+import com.example.manage_coffeeshop_bussiness_service.dto.request.EmployeeUpdateReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.EmployeeRes;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,6 +37,17 @@ public class EmployeeService {
                 .uri("/list")
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<EmployeeRes>>(){})
+                .block();
+    }
+
+    public EmployeeRes updateEmployee(int id,EmployeeUpdateReq req) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        req.setEmpPassword(passwordEncoder.encode(req.getEmpPassword()));
+        return webClient.put()
+                .uri("/{id}",id)
+                .body(Mono.just(req),EmployeeUpdateReq.class)
+                .retrieve()
+                .bodyToMono(EmployeeRes.class)
                 .block();
     }
 
