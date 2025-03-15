@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 @Data
 @NoArgsConstructor
@@ -16,6 +17,10 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int billId;
 
+    private LocalDate billCreationDate;
+    private double billTotal;
+    private String paymentMethod;
+
     @ManyToOne
     @JoinColumn(name="customer_id",nullable = false)
     private Customer customer;
@@ -24,15 +29,21 @@ public class Bill {
     @JoinColumn(name="employee_id",nullable = false)
     private Employee employee;
 
-
-    private LocalDate billCreationDate;
-    private double billTotal;
-    private String paymentMethod;
-
     //có 1 khóa ngoại bên bảng billDetail.
     @OneToMany(mappedBy = "bill")
     private Set<BillDetail> billDetails = new HashSet<>();
 
-    public void setCreatedAt(LocalDateTime localDateTime) {
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(billId); // Chỉ sử dụng billId
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bill bill = (Bill) o;
+        return billId == bill.billId; // Chỉ so sánh billId
     }
 }

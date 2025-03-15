@@ -15,4 +15,3 @@ public class BillProductKey implements Serializable {
     private int productId;
 
 }
-
