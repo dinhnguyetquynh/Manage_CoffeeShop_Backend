@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +19,7 @@ public class Product {
     private String productImg;
 
     @OneToMany(mappedBy = "product")
-    private Set<BillDetail> billDetails = new HashSet<>();
+    private List<BillDetail> billDetails = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="category_id",nullable = false)
@@ -34,5 +32,18 @@ public class Product {
         this.productInventoryQuantity = productInventoryQuantity;
         this.productImg = productImg;
         this.category = category;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return productId == product.productId;
     }
 }
