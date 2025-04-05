@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ManageCoffeeshopDataserviceApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(ManageCoffeeshopDataserviceApplication.class, args);
 	}
 

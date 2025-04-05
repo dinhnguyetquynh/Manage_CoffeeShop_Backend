@@ -26,8 +26,8 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public Employee getEmployeeByName(@RequestParam String name){
-        return employeeRepository.findByEmpAccount(name);
+    public Employee findEmployeeByAccount(@RequestParam String account){
+        return employeeRepository.findByEmpAccount(account);
     }
 
     @GetMapping("/list")

@@ -31,11 +31,12 @@ public class CustomerController {
 
     // CREATE new customer
     @PostMapping
-    public Customer createCustomer(@RequestBody CustomerRequest request) {
+    public String createCustomer(@RequestBody CustomerRequest request) {
         Customer customer = new Customer();
         customer.setCustomerName(request.getCustomerName());
         customer.setCustomerPhone(request.getCustomerPhone());
-        return customerRepository.save(customer);
+        customerRepository.save(customer);
+        return "Thêm khách hàng mới thành công";
     }
 
     // UPDATE customer

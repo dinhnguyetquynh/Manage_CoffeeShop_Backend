@@ -36,19 +36,25 @@ public class ProductController {
 
     // CREATE new product
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody ProductRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+    public String createProduct(@RequestBody ProductRequest request) {
+        try {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        Product product = new Product();
-        product.setProductName(request.getProductName());
-        product.setProductPrice(request.getProductPrice());
-        product.setProductInventoryQuantity(request.getProductInventoryQuantity());
-        product.setProductImg(request.getProductImg());
-        product.setCategory(category);
+            Product product = new Product();
+            product.setProductName(request.getProductName());
+            product.setProductPrice(request.getProductPrice());
+            product.setProductInventoryQuantity(request.getProductInventoryQuantity());
+            product.setProductImg(request.getProductImg());
+            product.setCategory(category);
+            productRepository.save(product);
+            return "Tạo sản phẩm thành công";
+        }catch (Exception e){
+            e.printStackTrace();
+            return "Tạo mới sản phẩm thất bại";
 
-        Product savedProduct = productRepository.save(product);
-        return ResponseEntity.ok(savedProduct);
+        }
+
     }
 
     // UPDATE product

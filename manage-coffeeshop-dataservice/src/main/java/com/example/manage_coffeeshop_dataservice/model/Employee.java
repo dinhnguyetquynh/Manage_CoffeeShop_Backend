@@ -1,5 +1,6 @@
 package com.example.manage_coffeeshop_dataservice.model;
 
+import com.example.manage_coffeeshop_dataservice.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,14 +20,15 @@ public class Employee {
     private String empName;
     private int empYearOfBirth;
     private String empPhone;
-    private int empRole;
+    @Enumerated(EnumType.STRING)
+    private Role empRole;
     private String empAccount;
     private String empPassword;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bill> bills = new ArrayList<>();
 
-    public Employee(int empId, String empName, int empYearOfBirth, String empPhone, int empRole, String empAccount, String empPassword) {
+    public Employee(int empId, String empName, int empYearOfBirth, String empPhone, Role empRole, String empAccount, String empPassword) {
         this.empId = empId;
         this.empName = empName;
         this.empYearOfBirth = empYearOfBirth;

@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,17 +46,20 @@ public class AuthenticationService {
 
     //xác thực và tạo token khi đăng nhập
     public AuthenticationRes authenticate(AuthenticationRequest req) {
-        EmployeeRes emp = findEmployeeById(req);
+        EmployeeRes emp = findEmployeeByAccount(req);
+
         if(emp == null) {
             throw new RuntimeException("Not found employee");
         }
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated= passwordEncoder.matches(req.getPassword(), emp.getEmpPassword());
+
+
         if(!authenticated){
             throw new RuntimeException("Invalid username or password");
         }
 
-        var token = generateToken(req.getUsername());
+        var token = generateToken(emp);
         return AuthenticationRes.builder()
                 .token(token)
                 .authenticated(true)
@@ -63,26 +67,26 @@ public class AuthenticationService {
 
     }
 
-    public EmployeeRes findEmployeeById(AuthenticationRequest req) {
+    public EmployeeRes findEmployeeByAccount(AuthenticationRequest req) {
 
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.queryParam("name",req.getUsername()).build())
+                .uri(uriBuilder -> uriBuilder.queryParam("account",req.getUsername()).build())
                 .retrieve()
                 .bodyToMono(EmployeeRes.class)
                 .block();
     }
 
-    private String generateToken(String username) {
+    private String generateToken(EmployeeRes emp) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().
-                subject(username).
+                subject(emp.getEmpAccount()).
                 issuer("studycoffeeshop.com").
                 issueTime(new Date()).
                 expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 )).
-                claim("customClaim","custom").
+                claim("scope",emp.getEmpRole()).
                 build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 

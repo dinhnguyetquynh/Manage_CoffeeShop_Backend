@@ -15,18 +15,18 @@ public class EmployeeFakerService {
         this.employeeRepository = employeeRepository;
     }
 
-    public void generateFakeEmployees(int count) {
-        for (int i = 0; i < count; i++) {
-            Employee employee = new Employee();
-            employee.setEmpName(faker.name().fullName());
-            employee.setEmpYearOfBirth(faker.number().numberBetween(1980, 2000));
-            employee.setEmpPhone(faker.phoneNumber().cellPhone());
-            employee.setEmpRole(faker.number().numberBetween(0, 3)); // 0: Staff, 1: Manager, 2: Admin
-            employee.setEmpAccount(faker.internet().username());
-            employee.setEmpPassword(faker.internet().password());
-            employeeRepository.save(employee);
-        }
-    }
+//    public void generateFakeEmployees(int count) {
+//        for (int i = 0; i < count; i++) {
+//            Employee employee = new Employee();
+//            employee.setEmpName(faker.name().fullName());
+//            employee.setEmpYearOfBirth(faker.number().numberBetween(1980, 2000));
+//            employee.setEmpPhone(faker.phoneNumber().cellPhone());
+//            employee.setEmpRole(faker.number().numberBetween(0, 3)); // 0: Staff, 1: Manager, 2: Admin
+//            employee.setEmpAccount(faker.internet().username());
+//            employee.setEmpPassword(faker.internet().password());
+//            employeeRepository.save(employee);
+//        }
+//    }
 }
 
 //@Service
