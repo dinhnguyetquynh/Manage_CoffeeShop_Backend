@@ -5,11 +5,15 @@ import com.example.manage_coffeeshop_bussiness_service.dto.request.IntrospectReq
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.AuthenticationRes;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.EmployeeRes;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.IntrospectRes;
+import com.example.manage_coffeeshop_bussiness_service.enums.Role;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +23,8 @@ import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,12 +51,13 @@ public class AuthenticationService {
 
 
     //xác thực và tạo token khi đăng nhập
-    public AuthenticationRes authenticate(AuthenticationRequest req) {
+    public AuthenticationRes authenticate(AuthenticationRequest req, HttpServletResponse response) {
         EmployeeRes emp = findEmployeeByAccount(req);
 
         if(emp == null) {
             throw new RuntimeException("Not found employee");
         }
+        System.out.println("Employee tim dc la:"+emp.getEmpAccount());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated= passwordEncoder.matches(req.getPassword(), emp.getEmpPassword());
 
@@ -59,16 +66,27 @@ public class AuthenticationService {
             throw new RuntimeException("Invalid username or password");
         }
 
-        var token = generateToken(emp);
+        String accessToken = generateToken(emp, 1); // 1 hour
+        String refreshToken = generateToken(emp, 7 * 24); // 7 days
+
+        // Set refresh token in HttpOnly cookie
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // true nếu dùng HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+        response.addCookie(cookie);
+
         return AuthenticationRes.builder()
-                .token(token)
                 .authenticated(true)
+                .token(accessToken)
+                .refreshToken(refreshToken)
                 .build();
 
     }
 
     public EmployeeRes findEmployeeByAccount(AuthenticationRequest req) {
-
+        System.out.println("Request is: "+req.getUsername());
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.queryParam("account",req.getUsername()).build())
                 .retrieve()
@@ -76,7 +94,7 @@ public class AuthenticationService {
                 .block();
     }
 
-    private String generateToken(EmployeeRes emp) {
+    public String generateToken(EmployeeRes emp,int hours) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().
@@ -84,7 +102,7 @@ public class AuthenticationService {
                 issuer("studycoffeeshop.com").
                 issueTime(new Date()).
                 expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(hours, ChronoUnit.HOURS).toEpochMilli()
                 )).
                 claim("scope",emp.getEmpRole()).
                 build();
@@ -119,6 +137,45 @@ public class AuthenticationService {
 
     }
 
+    //Lấy RT từ cookie , sau đó tạo AT mới
+    public String extractRefreshTokenFromToken(HttpServletRequest request) throws ParseException, JOSEException {
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null){
+            for(Cookie cookie:cookies){
+                if("refreshToken".equals(cookie.getName())){
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+
+    }
+
+    public AuthenticationRes generateNewAccessToken(String refreshToken) throws JOSEException, ParseException {
+
+            SignedJWT jwt = SignedJWT.parse(refreshToken);
+            boolean valid = jwt.verify(new MACVerifier(SIGNER_KEY.getBytes()));
+
+            if (!valid || jwt.getJWTClaimsSet().getExpirationTime().before(new Date())) {
+                throw new RuntimeException("Refreshtoken not valid");
+            }
+
+            String username = jwt.getJWTClaimsSet().getSubject();
+            String role = (String) jwt.getJWTClaimsSet().getClaim("scope");
+
+            EmployeeRes emp = new EmployeeRes();
+            emp.setEmpAccount(username);
+            emp.setEmpRole(Role.valueOf(role));
+
+            String newAccessToken =generateToken(emp,1); // 1 hour
+            return AuthenticationRes.builder()
+                    .authenticated(true)
+                    .token(newAccessToken)
+                    .build();
+
+
+
+    }
 
 
 

@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.validation.annotation.Validated;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -25,15 +26,19 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {"/api/business/auth/login","/api/business/auth/introspect","/api/business/employee"};
+    private final String[] PUBLIC_ENDPOINTS = {"/api/business/auth/login","/api/business/auth/introspect","/api/business/employee","/api/business/auth/refresh"};
     //Ngoaại trừ những api public thì các api còn lại phải được xác thực = jwt
     @Value("${jwt.signerKey}")
     private String signerKey;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated());
+        httpSecurity
+                .cors()
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtDecoder()), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                                .anyRequest().authenticated());
 
 
         httpSecurity.oauth2ResourceServer(oauth2->
@@ -44,6 +49,8 @@ public class SecurityConfig {
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
+
+
     }
 
     @Bean
