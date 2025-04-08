@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 import java.util.Date;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000",allowCredentials = "true")
 @RestController
 @RequestMapping("/api/business/auth")
 @RequiredArgsConstructor
