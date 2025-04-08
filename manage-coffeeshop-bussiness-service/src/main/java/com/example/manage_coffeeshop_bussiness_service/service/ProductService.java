@@ -24,10 +24,14 @@ public class ProductService {
                 .block();
     }
     public List<ProductRes> getAllProduct(){
-        return webClient.get()
+        List<ProductRes> lists= webClient.get()
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<ProductRes>>(){})
                 .block();
+        for(ProductRes pro:lists){
+            System.out.println("Product is:"+pro.toString());
+        }
+        return lists;
     }
 
     public ProductRes findProductById(int id){
@@ -42,5 +46,33 @@ public class ProductService {
 
         }
 
+    }
+
+    public List<ProductRes> getProductsByCategory(int categoryId){
+        List<ProductRes> lists= webClient.get()
+                .uri("/category/{categoryId}",categoryId)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<ProductRes>>(){})
+                .block();
+
+        return lists;
+    }
+
+    public ProductRes updateProduct(int id,ProductReq req){
+        return webClient.put()
+                .uri("/{id}",id)
+                .body(Mono.just(req),ProductReq.class)
+                .retrieve()
+                .bodyToMono(ProductRes.class)
+                .block();
+
+    }
+
+    public String deleteProductById(int id) {
+        return webClient.delete()
+                .uri("/{id}", id)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
     }
 }

@@ -30,4 +30,20 @@ public class ProductController {
     public ProductRes findProductById(@PathVariable int id){
         return productService.findProductById(id);
     }
+
+    @GetMapping("/category/{categoryId}")
+    public List<ProductRes> getProductsByCategory(@PathVariable int categoryId){
+        return productService.getProductsByCategory(categoryId);
+    }
+
+    @PutMapping("/{id}")
+    public ProductRes updateProduct(@PathVariable int id,@RequestBody ProductReq req){
+        return productService.updateProduct(id,req);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteProduct(@PathVariable int id){
+        return productService.deleteProductById(id);
+    }
+
 }
