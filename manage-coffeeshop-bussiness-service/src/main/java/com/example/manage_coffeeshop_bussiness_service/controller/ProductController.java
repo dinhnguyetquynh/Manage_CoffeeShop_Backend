@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/business/products")
@@ -17,5 +19,15 @@ public class ProductController {
     @PostMapping
     public String addProduct(@RequestBody ProductReq req) {
         return productService.createProduct(req);
+    }
+
+    @GetMapping
+    public List<ProductRes> getAllProducts(){
+        return productService.getAllProduct();
+    }
+
+    @GetMapping("/{id}")
+    public ProductRes findProductById(@PathVariable int id){
+        return productService.findProductById(id);
     }
 }
