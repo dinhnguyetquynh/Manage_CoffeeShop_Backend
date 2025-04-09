@@ -2,6 +2,7 @@ package com.example.manage_coffeeshop_dataservice.controller;
 
 import com.example.manage_coffeeshop_dataservice.dto.request.CategoryCreationReq;
 import com.example.manage_coffeeshop_dataservice.dto.request.CategoryUpdateReq;
+import com.example.manage_coffeeshop_dataservice.dto.respone.CategoryRes;
 import com.example.manage_coffeeshop_dataservice.model.Category;
 import com.example.manage_coffeeshop_dataservice.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -18,8 +20,16 @@ public class CategoryController {
     private CategoryRepository categoryRepository;
 
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryRes> getAllCategories() {
+        List<Category> lists = categoryRepository.findAll();
+
+        return lists.stream().map(category->{
+            CategoryRes cate = new CategoryRes();
+            cate.setCategoryId(category.getCategoryId());
+            cate.setCategoryName(category.getCategoryName());
+            cate.setCategoryDescription(category.getCategoryDescription());
+            return cate;
+        }).collect(Collectors.toList());
     }
 
     @PostMapping
