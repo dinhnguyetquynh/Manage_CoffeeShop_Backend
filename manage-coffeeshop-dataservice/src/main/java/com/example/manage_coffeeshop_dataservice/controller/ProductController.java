@@ -39,7 +39,7 @@ public class ProductController {
             res.setProductPrice(product.getProductPrice());
             res.setProductInventoryQuantity(product.getProductInventoryQuantity());
             res.setProductImg(product.getProductImg());
-            res.setCategoryId(product.getCategory().getCategoryId()); // lấy id từ entity category
+            res.setProductDescription(product.getProductDescription()); // lấy id từ entity category
             return res;
         }).collect(Collectors.toList());
     }
@@ -64,6 +64,7 @@ public class ProductController {
             product.setProductInventoryQuantity(request.getProductInventoryQuantity());
             product.setProductImg(request.getProductImg());
             product.setCategory(category);
+            product.setProductDescription(request.getProductDescription());
             productRepository.save(product);
             return "Tạo sản phẩm thành công";
         }catch (Exception e){
@@ -76,28 +77,10 @@ public class ProductController {
 
     // UPDATE product
     @PutMapping("/{id}")
-    public ResponseEntity<ProductRes> updateProduct(@PathVariable Integer id, @RequestBody ProductRequest request) {
-        return productRepository.findById(id)
-                .map(existingProduct -> {
-                    Category category = categoryRepository.findById(request.getCategoryId())
-                            .orElseThrow(() -> new RuntimeException("Category not found"));
+    public ProductRes updateProduct(@PathVariable int id, @RequestBody ProductRequest request) {
+       Product updateProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+       return productMapper.toProductRes(updateProduct);
 
-                    existingProduct.setProductName(request.getProductName());
-                    existingProduct.setProductPrice(request.getProductPrice());
-                    existingProduct.setProductInventoryQuantity(request.getProductInventoryQuantity());
-                    existingProduct.setProductImg(request.getProductImg());
-                    existingProduct.setCategory(category);
-
-                    Product updatedProduct = productRepository.save(existingProduct);
-                    ProductRes res = new ProductRes();
-                    res.setProductName(updatedProduct.getProductName());
-                    res.setProductPrice(updatedProduct.getProductPrice());
-                    res.setProductInventoryQuantity(updatedProduct.getProductInventoryQuantity());
-                    res.setProductImg(updatedProduct.getProductImg());
-                    res.setCategoryId(updatedProduct.getCategory().getCategoryId());
-                    return ResponseEntity.ok(res);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // DELETE product
@@ -117,12 +100,7 @@ public class ProductController {
         List<Product> products = productRepository.findByCategoryCategoryId(categoryId);
 
         return products.stream().map(product -> {
-            ProductRes res = new ProductRes();
-            res.setProductName(product.getProductName());
-            res.setProductPrice(product.getProductPrice());
-            res.setProductInventoryQuantity(product.getProductInventoryQuantity());
-            res.setProductImg(product.getProductImg());
-            res.setCategoryId(product.getCategory().getCategoryId()); // lấy id từ entity category
+            ProductRes res = productMapper.toProductRes(product);
             return res;
         }).collect(Collectors.toList());
     }

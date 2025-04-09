@@ -8,5 +8,6 @@ public class ProductReq {
     private double productPrice;
     private int productInventoryQuantity;
     private String productImg;
-    private Integer categoryId;
+    private String productDescription;
+    private int categoryId;
 }

@@ -4,9 +4,10 @@ import lombok.Data;
 
 @Data
 public class ProductRes {
+    private int productId;
     private String productName;
     private double productPrice;
     private int productInventoryQuantity;
     private String productImg;
-    private Integer categoryId;
+    private String productDescription;
 }

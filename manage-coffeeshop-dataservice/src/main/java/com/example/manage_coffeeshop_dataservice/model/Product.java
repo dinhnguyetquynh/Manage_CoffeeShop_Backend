@@ -17,6 +17,7 @@ public class Product {
     private double productPrice;
     private int productInventoryQuantity;
     private String productImg;
+    private String productDescription;
 
     @OneToMany(mappedBy = "product")
     private List<BillDetail> billDetails = new ArrayList<>();
