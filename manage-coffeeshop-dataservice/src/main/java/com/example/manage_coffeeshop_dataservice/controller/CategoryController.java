@@ -3,6 +3,7 @@ package com.example.manage_coffeeshop_dataservice.controller;
 import com.example.manage_coffeeshop_dataservice.dto.request.CategoryCreationReq;
 import com.example.manage_coffeeshop_dataservice.dto.request.CategoryUpdateReq;
 import com.example.manage_coffeeshop_dataservice.dto.respone.CategoryRes;
+import com.example.manage_coffeeshop_dataservice.mapper.CategoryMapper;
 import com.example.manage_coffeeshop_dataservice.model.Category;
 import com.example.manage_coffeeshop_dataservice.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import java.util.stream.Collectors;
 public class CategoryController {
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     @GetMapping
     public List<CategoryRes> getAllCategories() {
@@ -43,16 +47,17 @@ public class CategoryController {
     }
 
     @GetMapping("/{category_id}")
-    public Category getCategoryById(@PathVariable("category_id") int id) {
-        return categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category not found"));
+    public CategoryRes getCategoryById(@PathVariable int id) {
+        Category categoryFound = categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category not found"));
+        return categoryMapper.toCategoryRes(categoryFound);
     }
 
     @PutMapping("/{category_id}")
-    public Category updateCategory(@PathVariable("category_id") int id, @RequestBody CategoryUpdateReq req) {
+    public CategoryRes updateCategory(@PathVariable("category_id") int id, @RequestBody CategoryUpdateReq req) {
         Category category = categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category not found"));
         category.setCategoryName(req.getCategoryName());
         category.setCategoryDescription(req.getCategoryDescription());
-        return categoryRepository.save(category);
+        return categoryMapper.toCategoryRes(categoryRepository.save(category));
     }
     @DeleteMapping("/{category_id}")
     public String deleteCategory(@PathVariable("category_id") int id) {

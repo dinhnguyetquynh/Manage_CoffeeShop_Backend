@@ -2,6 +2,7 @@ package com.example.manage_coffeeshop_dataservice.controller;
 
 import com.example.manage_coffeeshop_dataservice.dto.request.ProductRequest;
 import com.example.manage_coffeeshop_dataservice.dto.respone.ProductRes;
+import com.example.manage_coffeeshop_dataservice.mapper.ProductMapper;
 import com.example.manage_coffeeshop_dataservice.model.Category;
 import com.example.manage_coffeeshop_dataservice.model.Product;
 import com.example.manage_coffeeshop_dataservice.repository.CategoryRepository;
@@ -24,6 +25,9 @@ public class ProductController {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     // GET all products
     @GetMapping
     public List<ProductRes> getAllProducts() {
@@ -42,9 +46,9 @@ public class ProductController {
 
     // GET product by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
-        Optional<Product> product = productRepository.findById(id);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ProductRes getProductById(@PathVariable Integer id) {
+        Product pd = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        return productMapper.toProductRes(pd);
     }
 
     // CREATE new product

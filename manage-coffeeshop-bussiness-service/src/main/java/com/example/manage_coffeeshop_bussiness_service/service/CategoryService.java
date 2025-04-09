@@ -28,7 +28,7 @@ public class CategoryService {
    public CategoryRes getCategoryById(int id) {
         try{
             return webClient.get()
-                    .uri("/{id}",id)
+                    .uri("/{category_id}",id)
                     .retrieve()
                     .bodyToMono(CategoryRes.class)
                     .block();
@@ -54,6 +54,20 @@ public class CategoryService {
                 .block();
    }
 
+   public String deleteCategory(int id){
+        return webClient.delete()
+                .uri("/{category_id}",id)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+   }
 
-
+   public CategoryRes updateCategory(int id,CategoryReq req){
+        return webClient.put()
+                .uri("/{category_id}",id)
+                .body(Mono.just(req),CategoryReq.class)
+                .retrieve()
+                .bodyToMono(CategoryRes.class)
+                .block();
+   }
 }
