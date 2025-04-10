@@ -2,14 +2,15 @@ package com.example.manage_coffeeshop_dataservice.controller;
 
 import com.example.manage_coffeeshop_dataservice.dto.request.OrderDetailReq;
 import com.example.manage_coffeeshop_dataservice.dto.request.OrderReq;
+import com.example.manage_coffeeshop_dataservice.dto.respone.OrderDetailRes;
+import com.example.manage_coffeeshop_dataservice.dto.respone.OrderRes;
 import com.example.manage_coffeeshop_dataservice.model.*;
 import com.example.manage_coffeeshop_dataservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -63,5 +64,56 @@ public class OrderController {
             e.printStackTrace();
             return "Tạo order không thành công";
         }
+    }
+
+    @GetMapping("/{id}")
+    public OrderRes findOrderById(@PathVariable int id){
+        Bill bill = billRepository.findById(id).orElseThrow(()->new RuntimeException("Order not found"));
+        List<BillDetail> lists = billDetailRepository.findAllByIdBillId(bill.getBillId());
+        OrderRes res = new OrderRes();
+        res.setCustomerId(String.valueOf(bill.getCustomer().getCustomerId()));
+        res.setEmployeeId(String.valueOf(bill.getEmployee().getEmpId()));
+        res.setOrderDate(bill.getBillCreationDate());
+        res.setOrderTotal(bill.getBillTotal());
+        res.setPaymentMethod(bill.getPaymentMethod());
+
+        List<OrderDetailRes> odRes = new ArrayList<>();
+        //list detail
+        for(BillDetail b:lists){
+            OrderDetailRes od = new OrderDetailRes();
+            od.setProductId(b.getProduct().getProductId());
+            od.setProductQuantity(b.getProductQuantity());
+            od.setSubTotal(b.getSubTotal());
+            odRes.add(od);
+        }
+        res.setOrderDetails(odRes);
+        return res;
+
+    }
+
+    @GetMapping("/date")
+    public OrderRes findOrderByDate(@RequestParam String date){
+        LocalDate date1 = LocalDate.parse(date);
+        Bill bill= billRepository.findByBillCreationDate(date1);
+        List<BillDetail> lists = billDetailRepository.findAllByIdBillId(bill.getBillId());
+
+        OrderRes res = new OrderRes();
+        res.setCustomerId(String.valueOf(bill.getCustomer().getCustomerId()));
+        res.setEmployeeId(String.valueOf(bill.getEmployee().getEmpId()));
+        res.setOrderDate(bill.getBillCreationDate());
+        res.setOrderTotal(bill.getBillTotal());
+        res.setPaymentMethod(bill.getPaymentMethod());
+
+        List<OrderDetailRes> odRes = new ArrayList<>();
+        //list detail
+        for(BillDetail b:lists){
+            OrderDetailRes od = new OrderDetailRes();
+            od.setProductId(b.getProduct().getProductId());
+            od.setProductQuantity(b.getProductQuantity());
+            od.setSubTotal(b.getSubTotal());
+            odRes.add(od);
+        }
+        res.setOrderDetails(odRes);
+        return res;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.manage_coffeeshop_dataservice.mapper;
 
 import com.example.manage_coffeeshop_dataservice.dto.request.EmployeeReq;
+import com.example.manage_coffeeshop_dataservice.dto.respone.EmployeeRes;
 import com.example.manage_coffeeshop_dataservice.model.Employee;
 import org.mapstruct.Mapper;
 
@@ -8,4 +9,5 @@ import org.mapstruct.Mapper;
 public interface EmployeeMapper {
 
     Employee toEmployee(EmployeeReq req);
+    EmployeeRes toEmployeeRes(Employee emp);
 }
