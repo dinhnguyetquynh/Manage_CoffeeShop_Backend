@@ -79,7 +79,14 @@ public class ProductController {
     @PutMapping("/{id}")
     public ProductRes updateProduct(@PathVariable int id, @RequestBody ProductRequest request) {
        Product updateProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+       updateProduct.setProductDescription(request.getProductDescription());
+       updateProduct.setProductInventoryQuantity(request.getProductInventoryQuantity());
+       updateProduct.setProductName(request.getProductName());
+       updateProduct.setProductPrice(request.getProductPrice());
+       updateProduct.setProductImg(request.getProductImg());
+       productRepository.save(updateProduct);
        return productMapper.toProductRes(updateProduct);
+
 
     }
 

@@ -1,12 +1,15 @@
 package com.example.manage_coffeeshop_dataservice.controller;
 
 import com.example.manage_coffeeshop_dataservice.dto.request.CustomerRequest;
+import com.example.manage_coffeeshop_dataservice.dto.respone.CustomerRes;
+import com.example.manage_coffeeshop_dataservice.mapper.CustomerMapper;
 import com.example.manage_coffeeshop_dataservice.model.Customer;
 import com.example.manage_coffeeshop_dataservice.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,17 +19,26 @@ public class CustomerController {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private CustomerMapper mapper;
+
     // GET all customers
     @GetMapping
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerRes> getAllCustomers() {
+        List<Customer> lists = customerRepository.findAll();
+        List<CustomerRes> listRes = new ArrayList<>();
+        for(Customer cus:lists){
+            listRes.add(mapper.toCustomerRes(cus));
+        }
+        return listRes;
     }
 
     // GET customer by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public CustomerRes getCustomerById(@PathVariable Integer id) {
+        Customer cus = customerRepository.findById(id).orElseThrow(()-> new RuntimeException("Customer not found"));
+        return mapper.toCustomerRes(cus);
+
     }
 
     // CREATE new customer
@@ -54,12 +66,27 @@ public class CustomerController {
 
     // DELETE customer
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable Integer id) {
-        return customerRepository.findById(id)
-                .map(customer -> {
-                    customerRepository.delete(customer);
-                    return ResponseEntity.ok().build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public String deleteCustomer(@PathVariable int id) {
+        try {
+            customerRepository.deleteById(id);
+            return "Delete Customer Successfully";
+        }catch (RuntimeException ex){
+            throw new RuntimeException("Delete customer failed");
+        }
+
+
     }
+
+    @GetMapping("/phone")
+    public CustomerRes findCustomerByPhone(@RequestParam String phone){
+
+        Customer cus = customerRepository.findByCustomerPhone(phone);
+        if(cus==null){
+            System.out.println("Khong tim thay cus");
+        }
+        return mapper.toCustomerRes(cus);
+
+    }
+
+
 }
