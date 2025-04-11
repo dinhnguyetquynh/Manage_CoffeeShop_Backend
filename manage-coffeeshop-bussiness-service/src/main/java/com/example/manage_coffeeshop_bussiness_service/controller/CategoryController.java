@@ -4,6 +4,7 @@ import com.example.manage_coffeeshop_bussiness_service.dto.request.CategoryReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CategoryRes;
 import com.example.manage_coffeeshop_bussiness_service.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+
     @GetMapping
     public List<CategoryRes> getAllCategories() {
         return categoryService.getAllCategories();
@@ -23,16 +25,19 @@ public class CategoryController {
         return categoryService.getCategoryById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public CategoryRes createCategory(@RequestBody CategoryReq categoryReq) {
         return categoryService.createCategory(categoryReq);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     public String deleteCategory(@PathVariable int id){
         return categoryService.deleteCategory(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
     public CategoryRes updateCategory(@PathVariable int id,@RequestBody CategoryReq req){
         return categoryService.updateCategory(id,req);

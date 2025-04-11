@@ -5,6 +5,7 @@ import com.example.manage_coffeeshop_bussiness_service.dto.respone.ProductRes;
 import com.example.manage_coffeeshop_bussiness_service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public String addProduct(@RequestBody ProductReq req) {
         return productService.createProduct(req);
@@ -36,11 +39,13 @@ public class ProductController {
         return productService.getProductsByCategory(categoryId);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ProductRes updateProduct(@PathVariable int id,@RequestBody ProductReq req){
         return productService.updateProduct(id,req);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public String deleteProduct(@PathVariable int id){
         return productService.deleteProductById(id);
