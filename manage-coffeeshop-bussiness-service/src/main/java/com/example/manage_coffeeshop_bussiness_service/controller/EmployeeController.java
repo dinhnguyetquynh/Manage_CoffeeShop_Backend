@@ -54,8 +54,15 @@ public class EmployeeController {
                 throw new RuntimeException("Employee not found");
             }
             return emp;
-
-
-
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{empId}")
+    public EmployeeRes findEmployeeById(@PathVariable int empId){
+        return employeeService.findEmployeeById(empId);
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{empId}")
+    public String deleteEmployeeById(@PathVariable int empId){
+        return employeeService.deleteEmployeeById(empId);
     }
 }

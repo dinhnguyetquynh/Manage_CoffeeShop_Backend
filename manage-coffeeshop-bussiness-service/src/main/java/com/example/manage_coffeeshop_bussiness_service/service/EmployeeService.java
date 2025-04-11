@@ -66,6 +66,20 @@ public class EmployeeService {
                 .block();
     }
 
+    public EmployeeRes findEmployeeById(int empId){
+        return webClient.get()
+                .uri("/{empId}",empId)
+                .retrieve()
+                .bodyToMono(EmployeeRes.class)
+                .block();
+    }
 
+    public String deleteEmployeeById(int id){
+        return webClient.delete()
+                .uri("/{empId}",id)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 
 }

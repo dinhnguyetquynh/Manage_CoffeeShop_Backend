@@ -24,7 +24,8 @@ public class EmployeeController {
     @PostMapping
     public EmployeeRes createEmployee(@RequestBody EmployeeReq req) {
         Employee emp = employeeMapper.toEmployee(req);
-        return employeeMapper.toEmployeeRes(employeeRepository.save(emp));
+        employeeRepository.save(emp);
+        return employeeMapper.toEmployeeRes(emp);
     }
 
     @GetMapping
@@ -53,4 +54,19 @@ public class EmployeeController {
         return employeeMapper.toEmployeeRes(employeeRepository.save(emp));
     }
 
+    @GetMapping("/{empId}")
+    public EmployeeRes findEmployeeById(@PathVariable int empId){
+        Employee emp = employeeRepository.findById(empId).orElseThrow(()-> new RuntimeException("Employee not found"));
+        return employeeMapper.toEmployeeRes(emp);
+    }
+
+    @DeleteMapping("/{empId}")
+    public String deleteEmployeeById(@PathVariable int empId){
+        try {
+            employeeRepository.deleteById(empId);
+            return "Delete employee successfully";
+        }catch (RuntimeException ex){
+            throw new RuntimeException("Delete employee failed");
+        }
+    }
 }
