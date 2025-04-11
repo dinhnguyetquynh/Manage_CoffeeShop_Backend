@@ -22,7 +22,7 @@ public class Bill {
     private String paymentMethod;
 
     @ManyToOne
-    @JoinColumn(name="customer_id")
+    @JoinColumn(name="customer_id",nullable = true)
     private Customer customer;
 
     @ManyToOne

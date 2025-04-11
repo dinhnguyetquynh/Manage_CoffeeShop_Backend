@@ -7,11 +7,13 @@ import com.example.manage_coffeeshop_dataservice.dto.respone.OrderRes;
 import com.example.manage_coffeeshop_dataservice.model.*;
 import com.example.manage_coffeeshop_dataservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/order")
@@ -35,9 +37,18 @@ public class OrderController {
     public String createOrder(@RequestBody OrderReq req) {
         try {
             Bill bill = new Bill();
-            Customer customer = customerRepository.findById(Integer.valueOf(req.getCustomerId())).orElseThrow(()->new RuntimeException("Not found customer"));
-            bill.setCustomer(customer);
-            Employee emp = employeeRepository.findById(Integer.valueOf(req.getCustomerId())).orElseThrow(()->new RuntimeException("Not found employee"));
+
+            if (StringUtils.isEmpty(req.getCustomerId())) {
+                bill.setCustomer(null);
+            } else {
+                Customer customer = customerRepository.findById(Integer.valueOf(req.getCustomerId()))
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
+                bill.setCustomer(customer);
+            }
+
+
+
+            Employee emp = employeeRepository.findById(Integer.valueOf(req.getEmployeeId())).orElseThrow(()->new RuntimeException("Not found employee"));
             bill.setEmployee(emp);
             bill.setBillCreationDate(req.getOrderDate());
             bill.setBillTotal(req.getOrderTotal());
