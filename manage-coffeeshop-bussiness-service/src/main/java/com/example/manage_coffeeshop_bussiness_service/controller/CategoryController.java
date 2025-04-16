@@ -3,6 +3,7 @@ package com.example.manage_coffeeshop_bussiness_service.controller;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CategoryReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CategoryRes;
 import com.example.manage_coffeeshop_bussiness_service.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public CategoryRes createCategory(@RequestBody CategoryReq categoryReq) {
+    public CategoryRes createCategory(@Valid @RequestBody CategoryReq categoryReq) {
         return categoryService.createCategory(categoryReq);
     }
 
@@ -39,7 +40,7 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping
-    public CategoryRes updateCategory(@PathVariable int id,@RequestBody CategoryReq req){
+    public CategoryRes updateCategory(@PathVariable int id,@Valid @RequestBody CategoryReq req){
         return categoryService.updateCategory(id,req);
     }
 }

@@ -10,5 +10,5 @@ public class ProductRes {
     private int productInventoryQuantity;
     private String productImg;
     private String productDescription;
+    private int categoryId;
 }
-

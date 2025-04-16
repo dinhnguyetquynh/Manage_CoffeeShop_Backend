@@ -12,6 +12,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,13 +32,13 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public AuthenticationRes authenticate(@RequestBody AuthenticationRequest authenticationReq,  HttpServletResponse response) {
+    public AuthenticationRes authenticate(@Valid @RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response) {
         return authenticationService.authenticate(authenticationReq,response);
 
     }
 
     @PostMapping("/introspect")
-    public IntrospectRes introspect(@RequestBody IntrospectReq introspectReq) throws ParseException, JOSEException {
+    public IntrospectRes introspect(@Valid@RequestBody IntrospectReq introspectReq) throws ParseException, JOSEException {
         return authenticationService.introspect(introspectReq);
 
     }

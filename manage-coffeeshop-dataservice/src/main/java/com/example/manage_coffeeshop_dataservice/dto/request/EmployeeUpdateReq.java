@@ -8,10 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeUpdateReq {
-
-
     private String empPhone;
-
     private String empAccount;
     private String empPassword;
 }

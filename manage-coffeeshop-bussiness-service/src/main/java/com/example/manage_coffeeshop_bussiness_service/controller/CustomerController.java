@@ -17,10 +17,11 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PostMapping
-    public String createCustomer(@RequestBody CustomerReq customerReq) {
-        return customerService.createCustomer(customerReq);
+    public ResponseEntity<CustomerRes> createCustomer(@RequestBody CustomerReq customerReq) {
+        CustomerRes createdCustomer = customerService.createCustomer(customerReq);
+        return ResponseEntity.ok(createdCustomer); //Trả JSON Object
     }
 
     @GetMapping("/phone")

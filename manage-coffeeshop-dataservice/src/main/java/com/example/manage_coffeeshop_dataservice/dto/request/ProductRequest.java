@@ -8,6 +8,6 @@ public class ProductRequest {
     private double productPrice;
     private int productInventoryQuantity;
     private String productImg;
-    private Integer categoryId;// Tham chiếu đến Category
+    private int categoryId;
     private String productDescription;
 }

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Service
 public class OrderService {
     private final WebClient webClient;
@@ -22,7 +24,7 @@ public class OrderService {
         return messageForCreateOrder;
     }
 
-    // tim kiem order = billid
+
     public OrderRes findOrderById(int id){
         return webClient.get()
                 .uri("/{id}",id)
@@ -32,14 +34,15 @@ public class OrderService {
 
     }
 
-    public OrderRes findOrderByDate(String date){
+    public List<OrderRes> findOrderByDate(String date){
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/date")
                         .queryParam("date",date)
                         .build())
                 .retrieve()
-                .bodyToMono(OrderRes.class)
+                .bodyToFlux(OrderRes.class)
+                .collectList()
                 .block();
 
     }

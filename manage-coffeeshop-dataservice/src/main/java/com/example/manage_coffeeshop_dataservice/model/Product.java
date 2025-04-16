@@ -34,6 +34,7 @@ public class Product {
         this.productImg = productImg;
         this.category = category;
     }
+    
 
     @Override
     public int hashCode() {

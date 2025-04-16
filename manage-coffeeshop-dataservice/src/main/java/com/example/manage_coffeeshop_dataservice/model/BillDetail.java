@@ -13,7 +13,6 @@ public class BillDetail {
     @EmbeddedId
     private BillProductKey id = new BillProductKey();
 
-    //dùng để map quan hệ 1-1 với bill, truường billId của bảng bill vừa là khóa chính, vừa là khóa ngoại
     @ManyToOne
     @MapsId("billId")
     @JoinColumn(name="bill_id")

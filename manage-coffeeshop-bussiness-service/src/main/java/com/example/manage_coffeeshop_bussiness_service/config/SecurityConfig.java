@@ -30,6 +30,7 @@ public class SecurityConfig {
     //Ngoaại trừ những api public thì các api còn lại phải được xác thực = jwt
     @Value("${jwt.signerKey}")
     private String signerKey;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -38,6 +39,8 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtDecoder()), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                                .requestMatchers("/api/business/bills/**").hasAnyRole("ADMIN", "USER")
+                                .requestMatchers("/api/business/bill-details/**").hasAnyRole("ADMIN", "USER")
                                 .anyRequest().authenticated());
 
 

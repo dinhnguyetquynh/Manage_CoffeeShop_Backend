@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -20,7 +19,7 @@ public class CustomerController {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private CustomerMapper mapper;
+    private CustomerMapper customerMapper;
 
     // GET all customers
     @GetMapping
@@ -28,7 +27,7 @@ public class CustomerController {
         List<Customer> lists = customerRepository.findAll();
         List<CustomerRes> listRes = new ArrayList<>();
         for(Customer cus:lists){
-            listRes.add(mapper.toCustomerRes(cus));
+            listRes.add(customerMapper.toCustomerRes(cus));
         }
         return listRes;
     }
@@ -37,18 +36,24 @@ public class CustomerController {
     @GetMapping("/{id}")
     public CustomerRes getCustomerById(@PathVariable Integer id) {
         Customer cus = customerRepository.findById(id).orElseThrow(()-> new RuntimeException("Customer not found"));
-        return mapper.toCustomerRes(cus);
+        return customerMapper.toCustomerRes(cus);
 
     }
 
     // CREATE new customer
     @PostMapping
-    public String createCustomer(@RequestBody CustomerRequest request) {
+    public ResponseEntity<CustomerRes> createCustomer(@RequestBody CustomerRequest request) {
         Customer customer = new Customer();
         customer.setCustomerName(request.getCustomerName());
         customer.setCustomerPhone(request.getCustomerPhone());
-        customerRepository.save(customer);
-        return "Thêm khách hàng mới thành công";
+
+        Customer savedCustomer = customerRepository.save(customer);
+        CustomerRes customerRes = new  CustomerRes();
+        customerRes.setCustomerId(savedCustomer.getCustomerId());
+        customerRes.setCustomerName(savedCustomer.getCustomerName());
+        customerRes.setCustomerPhone(savedCustomer.getCustomerPhone());
+
+        return ResponseEntity.ok(customerRes);
     }
 
     // UPDATE customer
@@ -84,7 +89,7 @@ public class CustomerController {
         if(cus==null){
             System.out.println("Khong tim thay cus");
         }
-        return mapper.toCustomerRes(cus);
+        return customerMapper.toCustomerRes(cus);
 
     }
 

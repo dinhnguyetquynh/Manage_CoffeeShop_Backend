@@ -35,11 +35,13 @@ public class ProductController {
 
         return products.stream().map(product -> {
             ProductRes res = new ProductRes();
+            res.setProductId(product.getProductId());
             res.setProductName(product.getProductName());
             res.setProductPrice(product.getProductPrice());
             res.setProductInventoryQuantity(product.getProductInventoryQuantity());
             res.setProductImg(product.getProductImg());
-            res.setProductDescription(product.getProductDescription()); // lấy id từ entity category
+            res.setProductDescription(product.getProductDescription());
+            res.setCategoryId(product.getCategory().getCategoryId());
             return res;
         }).collect(Collectors.toList());
     }
@@ -78,16 +80,23 @@ public class ProductController {
     // UPDATE product
     @PutMapping("/{id}")
     public ProductRes updateProduct(@PathVariable int id, @RequestBody ProductRequest request) {
-       Product updateProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
-       updateProduct.setProductDescription(request.getProductDescription());
-       updateProduct.setProductInventoryQuantity(request.getProductInventoryQuantity());
-       updateProduct.setProductName(request.getProductName());
-       updateProduct.setProductPrice(request.getProductPrice());
-       updateProduct.setProductImg(request.getProductImg());
-       productRepository.save(updateProduct);
-       return productMapper.toProductRes(updateProduct);
+        Product updateProduct = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        if (request.getCategoryId() != updateProduct.getCategory().getCategoryId()) {
+            Category newCategory = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            updateProduct.setCategory(newCategory);
+        }
 
+        updateProduct.setProductName(request.getProductName());
+        updateProduct.setProductPrice(request.getProductPrice());
+        updateProduct.setProductInventoryQuantity(request.getProductInventoryQuantity());
+        updateProduct.setProductImg(request.getProductImg());
+        updateProduct.setProductDescription(request.getProductDescription());
+
+        productRepository.save(updateProduct);
+        return productMapper.toProductRes(updateProduct);
     }
 
     // DELETE product

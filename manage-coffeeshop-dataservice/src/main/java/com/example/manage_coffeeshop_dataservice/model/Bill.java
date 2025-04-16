@@ -29,9 +29,9 @@ public class Bill {
     @JoinColumn(name="employee_id",nullable = false)
     private Employee employee;
 
-    //có 1 khóa ngoại bên bảng billDetail.
-    @OneToMany(mappedBy = "bill")
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BillDetail> billDetails = new HashSet<>();
+
 
 
     @Override
@@ -44,6 +44,6 @@ public class Bill {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bill bill = (Bill) o;
-        return billId == bill.billId; // Chỉ so sánh billId
+        return billId == bill.billId;
     }
 }

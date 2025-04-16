@@ -5,6 +5,7 @@ import com.example.manage_coffeeshop_bussiness_service.dto.request.EmployeeUpdat
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.ApiRespone;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.EmployeeRes;
 import com.example.manage_coffeeshop_bussiness_service.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class EmployeeController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ApiRespone<EmployeeRes> createEmployee(@RequestBody EmployeeReq req) {
+    public ApiRespone<EmployeeRes> createEmployee(@Valid @RequestBody EmployeeReq req) {
         ApiRespone<EmployeeRes> respone = new ApiRespone<>();
         respone.setResult(employeeService.createEmployee(req));
 
@@ -40,7 +41,7 @@ public class EmployeeController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{empId}")
-    public EmployeeRes updateEmployee(@PathVariable int empId,@RequestBody EmployeeUpdateReq req) {
+    public EmployeeRes updateEmployee(@PathVariable int empId,@Valid  @RequestBody EmployeeUpdateReq req) {
         return employeeService.updateEmployee(empId,req);
     }
 
@@ -60,6 +61,7 @@ public class EmployeeController {
     public EmployeeRes findEmployeeById(@PathVariable int empId){
         return employeeService.findEmployeeById(empId);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{empId}")
     public String deleteEmployeeById(@PathVariable int empId){

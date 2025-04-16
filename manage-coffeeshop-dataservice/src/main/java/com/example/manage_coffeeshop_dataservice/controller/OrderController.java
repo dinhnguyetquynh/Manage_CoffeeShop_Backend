@@ -46,16 +46,12 @@ public class OrderController {
                 bill.setCustomer(customer);
             }
 
-
-
             Employee emp = employeeRepository.findById(Integer.valueOf(req.getEmployeeId())).orElseThrow(()->new RuntimeException("Not found employee"));
             bill.setEmployee(emp);
             bill.setBillCreationDate(req.getOrderDate());
             bill.setBillTotal(req.getOrderTotal());
             bill.setPaymentMethod(req.getPaymentMethod());
             billRepository.save(bill);
-
-
 
             List<OrderDetailReq> orderDetailReqs = req.getOrderDetails();
             for(OrderDetailReq detail : orderDetailReqs ){
@@ -66,7 +62,6 @@ public class OrderController {
                 billDetail.setProduct(p);
                 billDetail.setProductQuantity(detail.getProductQuantity());
                 billDetail.setSubTotal(detail.getSubTotal());
-
 
                 billDetailRepository.save(billDetail);
             }
@@ -103,28 +98,37 @@ public class OrderController {
     }
 
     @GetMapping("/date")
-    public OrderRes findOrderByDate(@RequestParam String date){
+    public List<OrderRes> findOrderByDate(@RequestParam String date) {
         LocalDate date1 = LocalDate.parse(date);
-        Bill bill= billRepository.findByBillCreationDate(date1);
-        List<BillDetail> lists = billDetailRepository.findAllByIdBillId(bill.getBillId());
+        List<Bill> bills = billRepository.findByBillCreationDate(date1);
 
-        OrderRes res = new OrderRes();
-        res.setCustomerId(String.valueOf(bill.getCustomer().getCustomerId()));
-        res.setEmployeeId(String.valueOf(bill.getEmployee().getEmpId()));
-        res.setOrderDate(bill.getBillCreationDate());
-        res.setOrderTotal(bill.getBillTotal());
-        res.setPaymentMethod(bill.getPaymentMethod());
+        List<OrderRes> listOrderRes = new ArrayList<>();
+        for (Bill bill : bills) {
+            List<BillDetail> list = billDetailRepository.findAllByIdBillId(bill.getBillId());
+            OrderRes res = new OrderRes();
+            res.setBillId(bill.getBillId());
+            if (bill.getCustomer() != null) {
+                res.setCustomerId(String.valueOf(bill.getCustomer().getCustomerId()));
+            }
+            res.setEmployeeId(String.valueOf(bill.getEmployee().getEmpId()));
+            res.setOrderDate(bill.getBillCreationDate());
+            res.setOrderTotal(bill.getBillTotal());
+            res.setPaymentMethod(bill.getPaymentMethod());
 
-        List<OrderDetailRes> odRes = new ArrayList<>();
-        //list detail
-        for(BillDetail b:lists){
-            OrderDetailRes od = new OrderDetailRes();
-            od.setProductId(b.getProduct().getProductId());
-            od.setProductQuantity(b.getProductQuantity());
-            od.setSubTotal(b.getSubTotal());
-            odRes.add(od);
+            List<OrderDetailRes> odRes = new ArrayList<>();
+            //list detail
+            for (BillDetail b : list) {
+                OrderDetailRes od = new OrderDetailRes();
+                od.setProductId(b.getProduct().getProductId());
+                od.setProductName(b.getProduct().getProductName());
+                od.setProductPrice(b.getProduct().getProductPrice());
+                od.setProductQuantity(b.getProductQuantity());
+                od.setSubTotal(b.getSubTotal());
+                odRes.add(od);
+            }
+            res.setOrderDetails(odRes);
+            listOrderRes.add(res);
         }
-        res.setOrderDetails(odRes);
-        return res;
+        return listOrderRes;
     }
 }

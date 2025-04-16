@@ -99,6 +99,7 @@ public class AuthenticationService {
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().
                 subject(emp.getEmpAccount()).
+                claim("employeeId", emp.getEmpId()).
                 issuer("studycoffeeshop.com").
                 issueTime(new Date()).
                 expirationTime(new Date(

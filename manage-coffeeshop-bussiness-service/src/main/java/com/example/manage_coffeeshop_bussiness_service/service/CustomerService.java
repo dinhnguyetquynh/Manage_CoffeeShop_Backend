@@ -3,7 +3,6 @@ package com.example.manage_coffeeshop_bussiness_service.service;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -19,11 +18,11 @@ public class CustomerService {
         this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/customers").build();
     }
 
-    public String createCustomer(CustomerReq customerReq) {
+    public CustomerRes createCustomer(CustomerReq customerReq) {
         return webClient.post()
                 .body(Mono.just(customerReq),CustomerReq.class)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(CustomerRes.class)
                 .block();
     }
 

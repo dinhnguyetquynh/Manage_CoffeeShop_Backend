@@ -5,16 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
+
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class OrderRes {
+@NoArgsConstructor
+public class BillRes {
     private int billId;
-    private String customerId;
-    private String employeeId;
-    private LocalDate orderDate;
-    private double orderTotal;
+    private LocalDate billCreationDate;
+    private double billTotal;
     private String paymentMethod;
-    private List<OrderDetailRes> orderDetails;
+    private int customerId;
+    private int employeeId;
 }

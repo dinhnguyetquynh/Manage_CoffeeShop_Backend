@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRes {
+    private int billId;
     private String customerId;
     private String employeeId;
     private LocalDate orderDate;

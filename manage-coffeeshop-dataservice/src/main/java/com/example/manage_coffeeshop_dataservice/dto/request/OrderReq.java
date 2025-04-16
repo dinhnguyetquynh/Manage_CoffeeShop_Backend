@@ -18,5 +18,4 @@ public class OrderReq {
     private double orderTotal;
     private String paymentMethod;
     private List<OrderDetailReq> orderDetails;
-
 }

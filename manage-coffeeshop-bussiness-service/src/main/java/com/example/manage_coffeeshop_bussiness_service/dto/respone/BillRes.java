@@ -1,4 +1,4 @@
-package com.example.manage_coffeeshop_dataservice.dto.request;
+package com.example.manage_coffeeshop_bussiness_service.dto.respone;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BillRequest {
-    private int customerId;
-    private int employeeId;
+public class BillRes {
+    private int billId;
     private LocalDateTime billCreationDate;
     private double billTotal;
     private String paymentMethod;
-
+    private int customerId;
+    private int employeeId;
 }
