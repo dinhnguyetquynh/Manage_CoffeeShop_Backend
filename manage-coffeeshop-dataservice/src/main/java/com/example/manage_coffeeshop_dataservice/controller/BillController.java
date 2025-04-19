@@ -6,11 +6,12 @@ import com.example.manage_coffeeshop_dataservice.mapper.BillMapper;
 import com.example.manage_coffeeshop_dataservice.model.Bill;
 import com.example.manage_coffeeshop_dataservice.model.Customer;
 import com.example.manage_coffeeshop_dataservice.model.Employee;
-import com.example.manage_coffeeshop_dataservice.repository.BillDetailRepository;
 import com.example.manage_coffeeshop_dataservice.repository.BillRepository;
 import com.example.manage_coffeeshop_dataservice.repository.CustomerRepository;
 import com.example.manage_coffeeshop_dataservice.repository.EmployeeRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,7 @@ public class BillController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // CREATE new bill
+    // CREATE new bill with custom date format and success message
     @PostMapping
     public ResponseEntity<BillRes> createBill(@RequestBody BillRequest request) {
         try {
@@ -71,12 +72,11 @@ public class BillController {
 
     // UPDATE bill
     @PutMapping("/{id}")
-    public ResponseEntity<BillRes> updateBill(@PathVariable Integer id, @RequestBody BillRequest request) {
+    public ResponseEntity<BillRes> updateBill(@PathVariable Integer id, @Valid @RequestBody BillRequest request) {
         return billRepository.findById(id)
                 .map(existingBill -> {
                     billMapper.updateBillFromRequest(request, existingBill);
 
-                    // Xử lý customer và employee riêng
                     if (existingBill.getCustomer().getCustomerId() != request.getCustomerId()) {
                         Customer customer = customerRepository.findById(request.getCustomerId())
                                 .orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -95,19 +95,16 @@ public class BillController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // DELETE bill with custom success message
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBill(@PathVariable Integer id) {
-        try {
-            return billRepository.findById(id)
-                    .map(bill -> {
-                        billRepository.delete(bill); // JPA sẽ tự động xóa các BillDetail
-                        return ResponseEntity.ok().build();
-                    })
-                    .orElseGet(() -> ResponseEntity.notFound().build());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Lỗi khi xóa Bill: " + e.getMessage());
-        }
+    public ResponseEntity<String> deleteBill(@PathVariable Integer id) {
+        return billRepository.findById(id)
+                .map(bill -> {
+                    billRepository.delete(bill);
+                    return ResponseEntity.ok("Xóa thành công");
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Không tìm thấy bill có ID = " + id));
     }
 }

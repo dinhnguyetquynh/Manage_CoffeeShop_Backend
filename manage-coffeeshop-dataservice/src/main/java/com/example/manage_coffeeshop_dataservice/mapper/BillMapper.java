@@ -7,6 +7,7 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface BillMapper {
+    @Mapping(source = "billCreationDate", target = "billCreationDate")
     @Mapping(target = "customer", ignore = true)
     @Mapping(target = "employee", ignore = true)
     Bill toBill(BillRequest req);

@@ -58,15 +58,14 @@ public class BillDetailService {
                 .block();
     }
 
-    public void deleteDetail(int billId, int productId) {
-        webClient.delete()
+    public String deleteDetail(int billId, int productId) {
+        return webClient.delete()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("billId", billId)
                         .queryParam("productId", productId)
                         .build())
                 .retrieve()
-                .toBodilessEntity()
+                .bodyToMono(String.class)
                 .block();
     }
-
 }

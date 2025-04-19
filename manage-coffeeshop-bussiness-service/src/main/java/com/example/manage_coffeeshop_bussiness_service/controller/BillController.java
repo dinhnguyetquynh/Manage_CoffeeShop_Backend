@@ -3,6 +3,7 @@ package com.example.manage_coffeeshop_bussiness_service.controller;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.BillReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.BillRes;
 import com.example.manage_coffeeshop_bussiness_service.service.BillService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,19 +31,19 @@ public class BillController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public BillRes createBill(@RequestBody BillReq req) {
+    public BillRes createBill(@Valid @RequestBody BillReq req) {
         return billService.createBill(req);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public BillRes updateBill(@PathVariable int id, @RequestBody BillReq req) {
+    public BillRes updateBill(@PathVariable int id, @Valid @RequestBody BillReq req) {
         return billService.updateBill(id, req);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteBill(@PathVariable int id) {
-        billService.deleteBill(id);
+    public String deleteBill(@PathVariable int id) {
+        return billService.deleteBill(id);
     }
 }

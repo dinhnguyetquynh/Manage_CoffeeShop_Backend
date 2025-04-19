@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BillRes {
     private int billId;
-    private LocalDateTime billCreationDate;
+    private LocalDate billCreationDate;
     private double billTotal;
     private String paymentMethod;
     private int customerId;

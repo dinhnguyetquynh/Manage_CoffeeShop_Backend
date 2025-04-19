@@ -5,6 +5,7 @@ import com.example.manage_coffeeshop_bussiness_service.dto.respone.BillDetailRes
 import com.example.manage_coffeeshop_bussiness_service.service.BillDetailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -36,15 +37,16 @@ public class BillDetailController {
 
     @PutMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public BillDetailRes updateDetail(@RequestBody BillDetailReq req) {
+    public BillDetailRes updateDetail(@Valid @RequestBody BillDetailReq req) {
         return billDetailService.updateDetail(req);
     }
 
 
     @DeleteMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteDetail(@RequestParam int billId, @RequestParam int productId) {
-        billDetailService.deleteDetail(billId, productId);
+    public String deleteDetail(@RequestParam int billId,
+                                               @RequestParam int productId) {
+        return billDetailService.deleteDetail(billId, productId);
     }
 
 }

@@ -11,6 +11,4 @@ import java.util.List;
 @Repository
 public interface BillDetailRepository extends JpaRepository<BillDetail, BillProductKey> {
     List<BillDetail> findAllByIdBillId(int billId);
-
-    void deleteByBill(Bill bill);
 }

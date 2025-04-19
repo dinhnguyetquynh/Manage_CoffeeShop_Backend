@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -90,14 +89,18 @@ public class BillDetailController {
 
     // DELETE bill detail
     @DeleteMapping
-    public ResponseEntity<?> deleteDetail(@RequestParam int billId, @RequestParam int productId) {
+    public ResponseEntity<String> deleteDetail(@RequestParam int billId,
+                                               @RequestParam int productId) {
         BillProductKey key = new BillProductKey(billId, productId);
         return billDetailRepository.findById(key)
                 .map(detail -> {
                     billDetailRepository.delete(detail);
-                    return ResponseEntity.ok().build();
+                    return ResponseEntity
+                            .ok("Xóa thành công");
                 })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body("Không tìm thấy chi tiết hóa đơn"));
     }
 
 

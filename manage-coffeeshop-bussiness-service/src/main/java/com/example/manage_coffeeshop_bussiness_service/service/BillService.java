@@ -48,11 +48,11 @@ public class BillService {
                 .block();
     }
 
-    public void deleteBill(int id) {
-        webClient.delete()
+    public String deleteBill(int id) {
+        return webClient.delete()
                 .uri("/{id}", id)
                 .retrieve()
-                .toBodilessEntity()
+                .bodyToMono(String.class)
                 .block();
     }
 }
