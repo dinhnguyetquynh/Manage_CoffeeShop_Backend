@@ -40,8 +40,13 @@ public class ProductController {
             res.setProductPrice(product.getProductPrice());
             res.setProductInventoryQuantity(product.getProductInventoryQuantity());
             res.setProductImg(product.getProductImg());
+<<<<<<< Updated upstream
             res.setProductDescription(product.getProductDescription());
             res.setCategoryId(product.getCategory().getCategoryId());
+=======
+            res.setProductDescription(product.getProductDescription()); // lấy id từ entity category
+            res.setProductId(product.getProductId());
+>>>>>>> Stashed changes
             return res;
         }).collect(Collectors.toList());
     }

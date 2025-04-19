@@ -20,4 +20,5 @@ public class CloudinaryController {
         String imageUrl = cloudinaryService.upload(file);
         return ResponseEntity.ok(imageUrl);
     }
+
 }

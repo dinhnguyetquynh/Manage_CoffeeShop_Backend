@@ -21,7 +21,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<BillDetail> billDetails = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name="category_id",nullable = false)
     private Category category;

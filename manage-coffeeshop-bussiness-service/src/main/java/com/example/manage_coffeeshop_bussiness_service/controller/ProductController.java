@@ -19,9 +19,13 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+//<<<<<<< Updated upstream
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public String createProduct(@Valid @RequestBody ProductReq req) {
+//=======
+//    @PreAuthorize("hasRole('ADMIN')")String addProduct(@RequestBody ProductReq req) {
+//>>>>>>> Stashed changes
         return productService.createProduct(req);
     }
 

@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class ProductReq {
+//<<<<<<< Updated upstream
     @NotBlank(message = "Product name không được để trống")
     private String productName;
 
@@ -24,4 +25,12 @@ public class ProductReq {
 
     @Min(value = 1, message = "Category ID phải lớn hơn 0")
     private int categoryId;
+//=======
+//        private String productName;
+//        private double productPrice;
+//        private int productInventoryQuantity;
+//        private String productImg;
+//        private String productDescription;
+//        private int categoryId;
+//>>>>>>> Stashed changes
 }
