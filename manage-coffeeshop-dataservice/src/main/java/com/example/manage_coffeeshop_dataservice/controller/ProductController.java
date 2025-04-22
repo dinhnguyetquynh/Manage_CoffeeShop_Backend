@@ -81,6 +81,13 @@ public class ProductController {
     @PutMapping("/{id}")
     public ProductRes updateProduct(@PathVariable int id, @RequestBody ProductRequest request) {
        Product updateProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (request.getCategoryId() != updateProduct.getCategory().getCategoryId()) {
+            Category newCategory = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            updateProduct.setCategory(newCategory);
+        }
+
        updateProduct.setProductDescription(request.getProductDescription());
        updateProduct.setProductInventoryQuantity(request.getProductInventoryQuantity());
        updateProduct.setProductName(request.getProductName());

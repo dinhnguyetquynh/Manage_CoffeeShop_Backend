@@ -1,14 +1,19 @@
-package com.example.manage_coffeeshop_dataservice.dto.request;
+package com.example.manage_coffeeshop_bussiness_service.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 @Data
-public class BillRequest {
+@AllArgsConstructor
+@NoArgsConstructor
+public class BillReq {
+
     @Min(value = 1, message = "customerId phải lớn hơn 0")
     private int customerId;
 
@@ -26,9 +31,4 @@ public class BillRequest {
     @NotBlank(message = "paymentMethod không được để trống")
     @Pattern(regexp = "CASH|CARD|PAYPAL", message = "Phương thức thanh toán không hợp lệ")
     private String paymentMethod;
-//    private Integer customerId;
-//    private Integer employeeId;
-//    private LocalDateTime billCreationDate;
-//    private double billTotal;
-//    private String paymentMethod;
 }
