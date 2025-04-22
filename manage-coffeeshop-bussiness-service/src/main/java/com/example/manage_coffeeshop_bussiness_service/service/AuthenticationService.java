@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,8 @@ import java.util.Date;
 public class AuthenticationService {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
     private final WebClient webClient;
+    @Autowired
+    private RedisService redisService;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -68,7 +71,8 @@ public class AuthenticationService {
 
         String accessToken = generateToken(emp, 1); // 1 hour
         String refreshToken = generateToken(emp, 7 * 24); // 7 days
-
+        // Save RT in Redis
+        redisService.saveRefreshToken(refreshToken,7 * 24 * 60 * 60);
         // Set refresh token in HttpOnly cookie
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
@@ -173,8 +177,33 @@ public class AuthenticationService {
                     .token(newAccessToken)
                     .build();
 
+    }
 
+    private String extractTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = extractTokenFromCookie(request);
+        if (refreshToken != null && redisService.exists(refreshToken)) {
+            redisService.deleteRefreshToken(refreshToken);
+        }
 
+        // Xoá cookie phía client
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("Đăng xuất thành công");
     }
 
 
