@@ -36,22 +36,12 @@ import org.springframework.http.ResponseEntity;
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
-//    @PostMapping("/login")
-//    public AuthenticationRes authenticate(@RequestBody AuthenticationRequest authenticationReq,  HttpServletResponse response) {
-//        return authenticationService.authenticate(authenticationReq,response);
-//
-//    }
-
 // Dùng ConcurrentHashMap để lưu trữ số lần đăng nhập và thời gian
 private static final ConcurrentHashMap<String, LoginAttempt> loginAttempts = new ConcurrentHashMap<>();
     private static final int MAX_ATTEMPTS = 5;  // Tối đa 5 lần đăng nhập
     private static final long LOCK_TIME_DURATION = TimeUnit.MINUTES.toMillis(1);  // Giới hạn thời gian khóa 30 phút
 
     @PostMapping("/login")
-//<<<<<<< Updated upstream
-//    public AuthenticationRes authenticate(@Valid @RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response) {
-//        return authenticationService.authenticate(authenticationReq,response);
-//=======
     public AuthenticationRes  authenticate(@RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response) {
         String username = authenticationReq.getUsername();
 
@@ -77,7 +67,6 @@ private static final ConcurrentHashMap<String, LoginAttempt> loginAttempts = new
         if (attempt.getAttempts() >= MAX_ATTEMPTS) {
             return true;
         }
-//>>>>>>> Stashed changes
 
         // Cập nhật số lần đăng nhập
         loginAttempts.put(username, new LoginAttempt(attempt.getAttempts() + 1, System.currentTimeMillis()));
