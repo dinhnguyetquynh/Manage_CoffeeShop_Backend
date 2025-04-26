@@ -27,6 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {"/api/business/auth/login","/api/business/auth/introspect","/api/business/auth/refresh"};
+    public final String[] PL_GETENDPOINTS = {"/api/business/products","/api/business/products/{id}"};
     //Ngoaại trừ những api public thì các api còn lại phải được xác thực = jwt
     @Value("${jwt.signerKey}")
     private String signerKey;
@@ -38,6 +39,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtDecoder()), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.GET,PL_GETENDPOINTS).permitAll()
                                 .anyRequest().authenticated());
 
 
