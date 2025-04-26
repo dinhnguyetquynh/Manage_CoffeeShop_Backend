@@ -1,27 +1,29 @@
 package com.example.manage_coffeeshop_dataservice.dto.request;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
 public class ProductRequest {
-    @NotBlank(message = "Product name không được để trống")
+    @NotBlank(message = "Tên sản phẩm không được để trống")
+    @Size(max = 100, message = "Tên sản phẩm tối đa 100 ký tự")
     private String productName;
 
-    @Positive(message = "Product price phải là số dương")
-    private double productPrice;
+    @NotNull(message = "Giá sản phẩm không được để trống")
+    @Positive(message = "Giá sản phẩm phải là số dương")
+    private Double productPrice;
 
-    @Min(value = 0, message = "Product inventory quantity không được âm")
-    private int productInventoryQuantity;
+    @NotNull(message = "số lượng tồn không được để trống")
+    @Min(value = 0, message = "Số lượng tồn không âm")
+    private Integer productInventoryQuantity;
 
-    @NotBlank(message = "Product image URL không được để trống")
+    @NotBlank(message = "Hình ảnh sản phẩm không được để trống")
     private String productImg;
 
-    @NotBlank(message = "Product description không được để trống")
+    @NotBlank(message = "Mô tả sản phẩm không được để trống")
     private String productDescription;
 
-    @Min(value = 1, message = "Category ID phải lớn hơn 0")
-    private int categoryId;
+    @NotNull(message = "Mã Danh mục không được để trống")
+    @Min(value = 1, message = "Mã Danh mục phải lớn hơn 0")
+    private Integer categoryId;
 }

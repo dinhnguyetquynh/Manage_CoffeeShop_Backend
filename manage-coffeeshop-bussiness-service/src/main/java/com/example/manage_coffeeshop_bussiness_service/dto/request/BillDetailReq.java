@@ -10,13 +10,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BillDetailReq {
 
-    @Min(value = 1, message = "billId phải lớn hơn 0")
-    private int billId;
+    @NotNull(message = "Bill ID không được để trống")
+    @Min(value = 1, message = "Bill ID phải lớn hơn 0")
+    private Integer billId;
 
-    @Min(value = 1, message = "productId phải lớn hơn 0")
-    private int productId;
+    @NotNull(message = "Product ID không được để trống")
+    @Min(value = 1, message = "Product ID phải lớn hơn 0")
+    private Integer productId;
 
+    @NotNull(message = "ProductQuantity không được để trống")
     @Min(value = 1, message = "Số lượng sản phẩm phải ít nhất là 1")
-    private int productQuantity;
+    private Integer productQuantity;
 
 }

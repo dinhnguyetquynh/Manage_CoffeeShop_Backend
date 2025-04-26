@@ -6,8 +6,10 @@ import com.example.manage_coffeeshop_dataservice.dto.respone.CategoryRes;
 import com.example.manage_coffeeshop_dataservice.mapper.CategoryMapper;
 import com.example.manage_coffeeshop_dataservice.model.Category;
 import com.example.manage_coffeeshop_dataservice.repository.CategoryRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/categories")
+@Validated
 public class CategoryController {
     @Autowired
     private CategoryRepository categoryRepository;
@@ -37,7 +40,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category createCategory(@RequestBody CategoryCreationReq req) {
+    public Category createCategory(@Valid @RequestBody CategoryCreationReq req) {
         Category category = new Category();
         category.setCategoryName(req.getCategoryName());
         category.setCategoryDescription(req.getCategoryDescription());
@@ -53,7 +56,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{category_id}")
-    public CategoryRes updateCategory(@PathVariable("category_id") int id, @RequestBody CategoryUpdateReq req) {
+    public CategoryRes updateCategory(@PathVariable("category_id") int id, @Valid @RequestBody CategoryUpdateReq req) {
         Category category = categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category not found"));
         category.setCategoryName(req.getCategoryName());
         category.setCategoryDescription(req.getCategoryDescription());

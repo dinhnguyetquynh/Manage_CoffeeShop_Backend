@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/bills")
+@Validated
 public class BillController {
     @Autowired
     private BillRepository billRepository;
@@ -52,7 +54,7 @@ public class BillController {
 
     // CREATE new bill with custom date format and success message
     @PostMapping
-    public ResponseEntity<BillRes> createBill(@RequestBody BillRequest request) {
+    public ResponseEntity<BillRes> createBill(@Valid @RequestBody BillRequest request) {
         try {
             Customer customer = customerRepository.findById(request.getCustomerId())
                     .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + request.getCustomerId())); // Thêm thông báo lỗi chi tiết

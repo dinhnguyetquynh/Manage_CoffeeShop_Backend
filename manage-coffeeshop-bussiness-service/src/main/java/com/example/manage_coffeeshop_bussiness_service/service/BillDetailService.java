@@ -37,18 +37,11 @@ public class BillDetailService {
     }
 
     public BillDetailRes createDetail(BillDetailReq req) {
-        try {
             return webClient.post()
                     .bodyValue(req)
                     .retrieve()
                     .bodyToMono(BillDetailRes.class)
                     .block();
-        } catch (WebClientResponseException e) {
-            if (e.getRawStatusCode() == HttpStatus.CONFLICT.value()) {
-                throw new AppException(ErrorCode.BILL_DETAIL_EXISTS);
-            }
-            throw new AppException(ErrorCode.INTERNAL_ERROR);
-        }
     }
 
     public BillDetailRes updateDetail(BillDetailReq req) {

@@ -6,7 +6,9 @@ import com.example.manage_coffeeshop_dataservice.dto.respone.EmployeeRes;
 import com.example.manage_coffeeshop_dataservice.mapper.EmployeeMapper;
 import com.example.manage_coffeeshop_dataservice.model.Employee;
 import com.example.manage_coffeeshop_dataservice.repository.EmployeeRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employee")
+@Validated
 public class EmployeeController {
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -22,7 +25,7 @@ public class EmployeeController {
     private EmployeeMapper employeeMapper;
 
     @PostMapping
-    public EmployeeRes createEmployee(@RequestBody EmployeeReq req) {
+    public EmployeeRes createEmployee(@Valid @RequestBody EmployeeReq req) {
         Employee emp = employeeMapper.toEmployee(req);
         employeeRepository.save(emp);
         return employeeMapper.toEmployeeRes(emp);
@@ -46,7 +49,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{empId}")
-    public EmployeeRes updateEmployee(@PathVariable int empId, @RequestBody EmployeeUpdateReq req){
+    public EmployeeRes updateEmployee(@PathVariable int empId, @Valid @RequestBody EmployeeUpdateReq req){
         Employee emp = employeeRepository.findById(empId).get();
         emp.setEmpAccount(req.getEmpAccount());
         emp.setEmpPassword(req.getEmpPassword());

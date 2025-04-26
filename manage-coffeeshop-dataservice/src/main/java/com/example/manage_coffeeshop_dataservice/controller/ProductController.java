@@ -7,9 +7,11 @@ import com.example.manage_coffeeshop_dataservice.model.Category;
 import com.example.manage_coffeeshop_dataservice.model.Product;
 import com.example.manage_coffeeshop_dataservice.repository.CategoryRepository;
 import com.example.manage_coffeeshop_dataservice.repository.ProductRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
+@Validated
 public class ProductController {
     @Autowired
     private ProductRepository productRepository;
@@ -55,7 +58,7 @@ public class ProductController {
 
     // CREATE new product
     @PostMapping
-    public String createProduct(@RequestBody ProductRequest request) {
+    public String createProduct(@Valid @RequestBody ProductRequest request) {
         try {
             Category category = categoryRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
@@ -79,7 +82,7 @@ public class ProductController {
 
     // UPDATE product
     @PutMapping("/{id}")
-    public ProductRes updateProduct(@PathVariable int id, @RequestBody ProductRequest request) {
+    public ProductRes updateProduct(@PathVariable int id, @Valid @RequestBody ProductRequest request) {
        Product updateProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
 
         if (request.getCategoryId() != updateProduct.getCategory().getCategoryId()) {

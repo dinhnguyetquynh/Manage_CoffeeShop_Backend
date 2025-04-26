@@ -6,8 +6,10 @@ import com.example.manage_coffeeshop_dataservice.dto.respone.OrderDetailRes;
 import com.example.manage_coffeeshop_dataservice.dto.respone.OrderRes;
 import com.example.manage_coffeeshop_dataservice.model.*;
 import com.example.manage_coffeeshop_dataservice.repository.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/order")
+@Validated
 public class OrderController {
     @Autowired
     private BillRepository billRepository;
@@ -34,7 +37,7 @@ public class OrderController {
     private ProductRepository productRepository;
 
     @PostMapping
-    public String createOrder(@RequestBody OrderReq req) {
+    public String createOrder(@Valid @RequestBody OrderReq req) {
         System.out.println(req);
         try {
             Bill bill = new Bill();

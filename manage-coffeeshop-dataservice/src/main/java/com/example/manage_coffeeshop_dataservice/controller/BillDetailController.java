@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/bill-details")
+@Validated
 public class BillDetailController {
     @Autowired
     private BillDetailRepository billDetailRepository;
@@ -48,7 +50,7 @@ public class BillDetailController {
     }
 
     @PostMapping
-    public ResponseEntity<BillDetailRes> create(@RequestBody @Valid BillDetailRequest req) {
+    public ResponseEntity<BillDetailRes> create(@Valid @RequestBody BillDetailRequest req) {
         BillProductKey key = new BillProductKey(req.getBillId(), req.getProductId());
         if (billDetailRepository.existsById(key)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -70,7 +72,7 @@ public class BillDetailController {
     }
 
     @PutMapping
-    public ResponseEntity<BillDetailRes> updateDetail(@RequestBody BillDetailRequest request) {
+    public ResponseEntity<BillDetailRes> updateDetail(@Valid @RequestBody BillDetailRequest request) {
         BillProductKey key = new BillProductKey(request.getBillId(), request.getProductId());
         return billDetailRepository.findById(key)
                 .map(existingDetail -> {

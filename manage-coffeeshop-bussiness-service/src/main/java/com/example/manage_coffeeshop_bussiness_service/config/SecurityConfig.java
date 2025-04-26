@@ -30,6 +30,7 @@ public class SecurityConfig {
     //Ngoaại trừ những api public thì các api còn lại phải được xác thực = jwt
     @Value("${jwt.signerKey}")
     private String signerKey;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity

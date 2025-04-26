@@ -27,6 +27,15 @@ public class CustomerService {
                 .block(); // Lấy kết quả đồng bộ
     }
 
+    public CustomerRes updateCustomer(int id, CustomerReq req) {
+        return webClient.put()
+                .uri("/{id}", id)
+                .bodyValue(req)
+                .retrieve()
+                .bodyToMono(CustomerRes.class)
+                .block();
+    }
+
 
     public CustomerRes findCustomerByPhone(String phone){
         return webClient.get()
@@ -57,11 +66,18 @@ public class CustomerService {
 
     }
 
-    public List<CustomerRes> getAllCustomer(){
-        return webClient.get()
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<CustomerRes>>(){})
-                .block();
-
-    }
+//    public List<CustomerRes> getAllCustomer(){
+//        return webClient.get()
+//                .retrieve()
+//                .bodyToMono(new ParameterizedTypeReference<List<CustomerRes>>(){})
+//                .block();
+//
+//    }
+public List<CustomerRes> getAllCustomer() {
+    return webClient.get()
+            .retrieve()
+            .bodyToFlux(CustomerRes.class)
+            .collectList()
+            .block();
+}
 }
