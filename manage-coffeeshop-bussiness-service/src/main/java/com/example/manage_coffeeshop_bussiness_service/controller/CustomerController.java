@@ -1,6 +1,7 @@
 package com.example.manage_coffeeshop_bussiness_service.controller;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerReq;
+import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerRequest;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
 import com.example.manage_coffeeshop_bussiness_service.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,15 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+
     @PostMapping
-    public ResponseEntity<CustomerRes> createCustomer(@RequestBody CustomerReq customerReq) {
+    public ResponseEntity<CustomerRes> createCustomer(@RequestBody CustomerRequest customerReq) {
         CustomerRes createdCustomer = customerService.createCustomer(customerReq);
         return ResponseEntity.ok(createdCustomer); // Trả JSON object
     }
 
     @GetMapping("/phone")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<CustomerRes> findCustomerByPhone(@RequestParam String phone){
         return ResponseEntity.ok(customerService.findCustomerByPhone(phone));
     }
@@ -40,7 +42,7 @@ public class CustomerController {
     public ResponseEntity<String> deleteCustomer(@PathVariable int id){
         return ResponseEntity.ok(customerService.deleteCustomer(id));
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
     public ResponseEntity<List<CustomerRes>> getAllCustomer(){
         return ResponseEntity.ok(customerService.getAllCustomer());

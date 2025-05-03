@@ -4,6 +4,8 @@ import com.example.manage_coffeeshop_dataservice.dto.request.CustomerRequest;
 import com.example.manage_coffeeshop_dataservice.dto.respone.CustomerRes;
 import com.example.manage_coffeeshop_dataservice.mapper.CustomerMapper;
 import com.example.manage_coffeeshop_dataservice.model.Customer;
+import com.example.manage_coffeeshop_dataservice.model.Gender;
+import com.example.manage_coffeeshop_dataservice.model.Rank;
 import com.example.manage_coffeeshop_dataservice.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -28,7 +29,19 @@ public class CustomerController {
         List<Customer> lists = customerRepository.findAll();
         List<CustomerRes> listRes = new ArrayList<>();
         for(Customer cus:lists){
-            listRes.add(mapper.toCustomerRes(cus));
+            CustomerRes res = new CustomerRes();
+            res.setCustomerId(cus.getCustomerId());
+            res.setCustomerName(cus.getCustomerName());
+            res.setCustomerPhone(cus.getCustomerPhone());
+            res.setGender(cus.getGender().name());
+            res.setBirthDay(cus.getBirthday());
+            res.setEmail(cus.getEmail());
+            res.setAddress(cus.getAddress());
+            res.setAccountCus(cus.getAccountCus());
+            res.setPasswordCus(cus.getPasswordCus());
+            res.setAccumulatedPoint(cus.getAccumulatedPoint());
+            res.setRank(cus.getRank().name());
+            listRes.add(res);
         }
         return listRes;
     }
@@ -37,24 +50,60 @@ public class CustomerController {
     @GetMapping("/{id}")
     public CustomerRes getCustomerById(@PathVariable Integer id) {
         Customer cus = customerRepository.findById(id).orElseThrow(()-> new RuntimeException("Customer not found"));
-        return mapper.toCustomerRes(cus);
+
+        CustomerRes res = new CustomerRes();
+        res.setCustomerId(cus.getCustomerId());
+        res.setCustomerName(cus.getCustomerName());
+        res.setCustomerPhone(cus.getCustomerPhone());
+        res.setGender(cus.getGender().name());
+        res.setBirthDay(cus.getBirthday());
+        res.setEmail(cus.getEmail());
+        res.setAddress(cus.getAddress());
+        res.setAccountCus(cus.getAccountCus());
+        res.setPasswordCus(cus.getPasswordCus());
+        res.setAccumulatedPoint(cus.getAccumulatedPoint());
+        res.setRank(cus.getRank().name());
+        return res;
 
     }
 
     // CREATE new customer
     @PostMapping
-    public ResponseEntity<CustomerRes> createCustomer(@RequestBody CustomerRequest request) {
+    public CustomerRes createCustomer(@RequestBody CustomerRequest req) {
+        System.out.println("Customer nhan duoc la:"+req.toString());
+
         Customer customer = new Customer();
-        customer.setCustomerName(request.getCustomerName());
-        customer.setCustomerPhone(request.getCustomerPhone());
 
-        Customer savedCustomer = customerRepository.save(customer);
-        CustomerRes customerRes = new CustomerRes();
-        customerRes.setCustomerId(savedCustomer.getCustomerId());
-        customerRes.setCustomerName(savedCustomer.getCustomerName());
-        customerRes.setCustomerPhone(savedCustomer.getCustomerPhone());
+        customer.setCustomerName( req.getCustomerName() );
+        customer.setCustomerPhone( req.getCustomerPhone() );
+        if ( req.getGender() != null ) {
+            customer.setGender(Gender.fromDisplayName(req.getGender()));
+        }
+        customer.setBirthday(req.getBirthDay());
+        customer.setEmail( req.getEmail() );
+        customer.setAddress( req.getAddress() );
+        customer.setAccountCus( req.getAccountCus() );
+        customer.setPasswordCus( req.getPasswordCus() );
+        customer.setAccumulatedPoint(0);
+        customer.setRank(Rank.MEMBER);
+        Customer createdCus = customerRepository.save(customer);
+        //Map customer thanfh customer res: customerId,Name,Phone;gender;
+        // birthDay;email;address;accountCus;passwordCus;accumulatedPoint;rank;
 
-        return ResponseEntity.ok(customerRes); // trả về JSON khách hàng vừa lưu
+        CustomerRes res = new CustomerRes();
+        res.setCustomerId(createdCus.getCustomerId());
+        res.setCustomerName(createdCus.getCustomerName());
+        res.setCustomerPhone(createdCus.getCustomerPhone());
+        res.setGender(createdCus.getGender().name());
+        res.setBirthDay(createdCus.getBirthday());
+        res.setEmail(createdCus.getEmail());
+        res.setAddress(createdCus.getAddress());
+        res.setAccountCus(createdCus.getAccountCus());
+        res.setPasswordCus(createdCus.getPasswordCus());
+        res.setAccumulatedPoint(createdCus.getAccumulatedPoint());
+        res.setRank(createdCus.getRank().name());
+        return res;
+
     }
 
     // UPDATE customer
@@ -87,11 +136,47 @@ public class CustomerController {
     public CustomerRes findCustomerByPhone(@RequestParam String phone){
 
         Customer cus = customerRepository.findByCustomerPhone(phone);
+        CustomerRes res = new CustomerRes();
         if(cus==null){
             System.out.println("Khong tim thay cus");
+        }else{
+            res.setCustomerId(cus.getCustomerId());
+            res.setCustomerName(cus.getCustomerName());
+            res.setCustomerPhone(cus.getCustomerPhone());
+            res.setGender(cus.getGender().name());
+            res.setBirthDay(cus.getBirthday());
+            res.setEmail(cus.getEmail());
+            res.setAddress(cus.getAddress());
+            res.setAccountCus(cus.getAccountCus());
+            res.setPasswordCus(cus.getPasswordCus());
+            res.setAccumulatedPoint(cus.getAccumulatedPoint());
+            res.setRank(cus.getRank().name());
         }
-        return mapper.toCustomerRes(cus);
+        return res;
 
+    }
+
+    @GetMapping("/account")
+    public CustomerRes findCustomerByAccount(@RequestParam String account){
+        Customer cus = customerRepository.findByAccountCus(account);
+        CustomerRes res = new CustomerRes();
+        if(cus==null){
+            System.out.println("Khong tim thay cus");
+        }else{
+            res.setCustomerId(cus.getCustomerId());
+            res.setCustomerName(cus.getCustomerName());
+            res.setCustomerPhone(cus.getCustomerPhone());
+            res.setGender(cus.getGender().name());
+            res.setBirthDay(cus.getBirthday());
+            res.setEmail(cus.getEmail());
+            res.setAddress(cus.getAddress());
+            res.setAccountCus(cus.getAccountCus());
+            res.setPasswordCus(cus.getPasswordCus());
+            res.setAccumulatedPoint(cus.getAccumulatedPoint());
+            res.setRank(cus.getRank().name());
+
+        }
+        return res;
     }
 
 
