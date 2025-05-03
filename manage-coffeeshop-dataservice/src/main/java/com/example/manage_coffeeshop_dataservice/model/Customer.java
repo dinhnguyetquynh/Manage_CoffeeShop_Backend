@@ -4,25 +4,61 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Data
 @NoArgsConstructor
 @Entity
 public class Customer {
+    //hoten,sdt,  gioitinh, ngaysinh,email,diachi, rank, diem tich luy
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customerId;
     private String customerName;
     private String customerPhone;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    private LocalDate birthday;
+    private String email;
+    private String address;
+    private int accumulatedPoint;
+    @Enumerated(EnumType.STRING)
+    private Rank rank;
+
+    private String accountCus;
+    private String passwordCus;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bill> bills = new ArrayList<>();
 
-    public Customer(int customerId, String customerName, String customerPhone) {
+    public Customer(int customerId, String customerName, String customerPhone, Gender gender, LocalDate birthday, String email, String address, int accumulatedPoint, Rank rank, String accountCus, String passwordCus) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.email = email;
+        this.address = address;
+        this.accumulatedPoint = accumulatedPoint;
+        this.rank = rank;
+        this.accountCus = accountCus;
+        this.passwordCus = passwordCus;
+    }
+
+    public Customer(int customerId, String customerName, String customerPhone, Gender gender, LocalDate birthday, String email, String address, int accumulatedPoint, Rank rank, String accountCus, String passwordCus, List<Bill> bills) {
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.customerPhone = customerPhone;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.email = email;
+        this.address = address;
+        this.accumulatedPoint = accumulatedPoint;
+        this.rank = rank;
+        this.accountCus = accountCus;
+        this.passwordCus = passwordCus;
+        this.bills = bills;
     }
 
     @Override
