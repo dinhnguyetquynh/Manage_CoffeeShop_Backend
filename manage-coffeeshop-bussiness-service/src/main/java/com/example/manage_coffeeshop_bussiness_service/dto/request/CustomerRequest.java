@@ -1,10 +1,14 @@
 package com.example.manage_coffeeshop_bussiness_service.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomerRequest {
     private String customerName;
     private String customerPhone;

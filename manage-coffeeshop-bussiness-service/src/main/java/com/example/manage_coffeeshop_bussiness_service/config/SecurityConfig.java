@@ -26,7 +26,16 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {"/api/business/auth/login","/api/business/auth/introspect","/api/business/auth/refresh","/api/business/authCustomer/login","/api/business/customer"};
+    private final String[] PUBLIC_ENDPOINTS = {
+            "/api/business/auth/login",
+            "/api/business/auth/introspect",
+            "/api/business/auth/refresh",
+            "/api/business/authCustomer/login",
+            "/api/business/customer",
+            "/api/business/authCustomer/send-otp",
+            "/api/business/authCustomer/verify-otp"
+    };
+
     public final String[] PL_GETENDPOINTS = {"/api/business/products","/api/business/products/{id}"};
     //Ngoaại trừ những api public thì các api còn lại phải được xác thực = jwt
     @Value("${jwt.signerKey}")
