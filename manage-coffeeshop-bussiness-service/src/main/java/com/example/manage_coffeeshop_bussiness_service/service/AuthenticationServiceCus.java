@@ -1,17 +1,20 @@
 package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.AuthenticationRequest;
-import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerRequest;
+
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.AuthenticationRes;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
-import com.example.manage_coffeeshop_bussiness_service.dto.respone.EmployeeRes;
+
 import com.example.manage_coffeeshop_bussiness_service.enums.Role;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
+
 import com.nimbusds.jwt.JWTClaimsSet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.NonFinal;
+import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class AuthenticationServiceCus {
@@ -100,7 +104,7 @@ public class AuthenticationServiceCus {
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder().
                 subject(cus.getAccountCus()).
                 issuer("studycoffeeshop.com").
-                claim("employeeId",cus.getCustomerId()).
+                claim("customerId",cus.getCustomerId()).
                 issueTime(new Date()).
                 expirationTime(new Date(
                         Instant.now().plus(hours, ChronoUnit.HOURS).toEpochMilli()
@@ -119,5 +123,27 @@ public class AuthenticationServiceCus {
             throw new RuntimeException(e);
         }
 
+    }
+    public String extractCustomerIdFromToken(String token) {
+        try {
+            // 1. Parse token
+            JWSObject jwsObject = JWSObject.parse(token);
+
+            // 2. Verify signature
+            JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+            if (!jwsObject.verify(verifier)) {
+                throw new RuntimeException("Invalid token signature");
+            }
+
+            // 3. Get claims
+            Map<String, Object> jsonPayload = jwsObject.getPayload().toJSONObject();
+            String customerId = String.valueOf(jsonPayload.get("customerId"));
+
+            return customerId;
+
+        } catch (Exception e) {
+            log.error("Failed to parse token", e);
+            throw new RuntimeException("Invalid token", e);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.manage_coffeeshop_bussiness_service.controller;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerRequest;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
+import com.example.manage_coffeeshop_bussiness_service.service.AuthenticationServiceCus;
 import com.example.manage_coffeeshop_bussiness_service.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import java.util.List;
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private AuthenticationServiceCus authenticationServiceCus;
 
 
     @PostMapping
@@ -46,6 +49,25 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<List<CustomerRes>> getAllCustomer(){
         return ResponseEntity.ok(customerService.getAllCustomer());
+    }
+    @GetMapping("/getInfo/{id}")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ResponseEntity<?> getInfoCustomer(@RequestHeader("Authorization") String authHeader,@PathVariable int id){
+        CustomerRes infoCus = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            System.out.println("Token: " + token);
+
+            int customerId = Integer.parseInt(authenticationServiceCus.extractCustomerIdFromToken(token));
+            if(customerId==id){
+               infoCus = customerService.findCustomerById(id);
+                System.out.println("Info of Cus :"+infoCus);
+            }else{
+                System.out.println("Customer not found");
+            }
+        }
+        return ResponseEntity.ok(infoCus);
+
     }
 
 }
