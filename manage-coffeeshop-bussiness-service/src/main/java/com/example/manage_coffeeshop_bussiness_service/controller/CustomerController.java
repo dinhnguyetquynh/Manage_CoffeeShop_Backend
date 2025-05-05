@@ -50,17 +50,18 @@ public class CustomerController {
     public ResponseEntity<List<CustomerRes>> getAllCustomer(){
         return ResponseEntity.ok(customerService.getAllCustomer());
     }
-    @GetMapping("/getInfo/{id}")
+    @GetMapping("/getInfo")
     @PreAuthorize("hasAnyRole('CUSTOMER')")
-    public ResponseEntity<?> getInfoCustomer(@RequestHeader("Authorization") String authHeader,@PathVariable int id){
+    public ResponseEntity<?> getInfoCustomer(@RequestHeader("Authorization") String authHeader){
         CustomerRes infoCus = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             System.out.println("Token: " + token);
 
-            int customerId = Integer.parseInt(authenticationServiceCus.extractCustomerIdFromToken(token));
-            if(customerId==id){
-               infoCus = customerService.findCustomerById(id);
+            String customerIdStr = authenticationServiceCus.extractCustomerIdFromToken(token);
+            if(customerIdStr!=null && !customerIdStr.isEmpty()){
+                int customerId = Integer.parseInt(customerIdStr);
+               infoCus = customerService.findCustomerById(customerId);
                 System.out.println("Info of Cus :"+infoCus);
             }else{
                 System.out.println("Customer not found");
