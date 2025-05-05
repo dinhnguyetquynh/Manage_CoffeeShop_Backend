@@ -43,22 +43,22 @@ public class AuthenticationCusCTRLLER {
     }
 
     @PostMapping("/verify-otp")
-    public CustomerRes verifyOtp(@RequestBody OtpRequest otpRequest) {
+    public ResponseEntity<?> verifyOtp(@RequestBody OtpRequest otpRequest) {
         boolean isValid = otpService.verifyOtp(otpRequest.getEmail(), otpRequest.getOtp());
         if (!isValid) {
-            log.info("token khong hop le");
+            return ResponseEntity.badRequest().body("OTP KHONG HOP LE");
         }
 
         CustomerRequest customer = otpService.getCustomer(otpRequest.getEmail());
+        log.info("Customer lay tu REdis la:"+customer);
         if (customer == null) {
-            log.info("Cutomer not found");
+            return ResponseEntity.badRequest().body("Customer not found");
         }
 
         CustomerRes saved = customerService.createCustomer(customer);
-        log.info(saved+"safgvgv");
         otpService.clearOtp(otpRequest.getEmail());
 
-        return saved;
+        return ResponseEntity.ok(saved);
     }
 
 

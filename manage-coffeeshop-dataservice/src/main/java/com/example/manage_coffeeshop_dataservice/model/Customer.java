@@ -24,7 +24,8 @@ public class Customer {
     private String address;
     private int accumulatedPoint;
     @Enumerated(EnumType.STRING)
-    private Rank rank;
+    @Column(name="rank_level")
+    private Rank rank_level;
 
     private String accountCus;
     private String passwordCus;
@@ -32,7 +33,7 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bill> bills = new ArrayList<>();
 
-    public Customer(int customerId, String customerName, String customerPhone, Gender gender, LocalDate birthday, String email, String address, int accumulatedPoint, Rank rank, String accountCus, String passwordCus) {
+    public Customer(int customerId, String customerName, String customerPhone, Gender gender, LocalDate birthday, String email, String address, int accumulatedPoint, Rank rank_level, String accountCus, String passwordCus) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
@@ -41,12 +42,12 @@ public class Customer {
         this.email = email;
         this.address = address;
         this.accumulatedPoint = accumulatedPoint;
-        this.rank = rank;
+        this.rank_level = rank_level;
         this.accountCus = accountCus;
         this.passwordCus = passwordCus;
     }
 
-    public Customer(int customerId, String customerName, String customerPhone, Gender gender, LocalDate birthday, String email, String address, int accumulatedPoint, Rank rank, String accountCus, String passwordCus, List<Bill> bills) {
+    public Customer(int customerId, String customerName, String customerPhone, Gender gender, LocalDate birthday, String email, String address, int accumulatedPoint, Rank rank_level, String accountCus, String passwordCus, List<Bill> bills) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
@@ -55,7 +56,7 @@ public class Customer {
         this.email = email;
         this.address = address;
         this.accumulatedPoint = accumulatedPoint;
-        this.rank = rank;
+        this.rank_level = rank_level;
         this.accountCus = accountCus;
         this.passwordCus = passwordCus;
         this.bills = bills;
