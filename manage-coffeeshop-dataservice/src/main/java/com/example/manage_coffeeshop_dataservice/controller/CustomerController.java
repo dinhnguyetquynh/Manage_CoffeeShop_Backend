@@ -33,7 +33,7 @@ public class CustomerController {
             res.setCustomerId(cus.getCustomerId());
             res.setCustomerName(cus.getCustomerName());
             res.setCustomerPhone(cus.getCustomerPhone());
-            res.setGender(cus.getGender().name());
+            res.setGender(cus.getGender().getDisplayName());
             res.setBirthDay(cus.getBirthday());
             res.setEmail(cus.getEmail());
             res.setAddress(cus.getAddress());
@@ -55,7 +55,7 @@ public class CustomerController {
         res.setCustomerId(cus.getCustomerId());
         res.setCustomerName(cus.getCustomerName());
         res.setCustomerPhone(cus.getCustomerPhone());
-        res.setGender(cus.getGender().name());
+        res.setGender(cus.getGender().getDisplayName());
         res.setBirthDay(cus.getBirthday());
         res.setEmail(cus.getEmail());
         res.setAddress(cus.getAddress());
@@ -94,7 +94,11 @@ public class CustomerController {
         res.setCustomerId(createdCus.getCustomerId());
         res.setCustomerName(createdCus.getCustomerName());
         res.setCustomerPhone(createdCus.getCustomerPhone());
-        res.setGender(createdCus.getGender().name());
+
+        if(createdCus.getGender()!=null){
+            res.setGender(createdCus.getGender().getDisplayName());
+        }
+
         res.setBirthDay(createdCus.getBirthday());
         res.setEmail(createdCus.getEmail());
         res.setAddress(createdCus.getAddress());
@@ -143,7 +147,7 @@ public class CustomerController {
             res.setCustomerId(cus.getCustomerId());
             res.setCustomerName(cus.getCustomerName());
             res.setCustomerPhone(cus.getCustomerPhone());
-            res.setGender(cus.getGender().name());
+            res.setGender(cus.getGender().getDisplayName());
             res.setBirthDay(cus.getBirthday());
             res.setEmail(cus.getEmail());
             res.setAddress(cus.getAddress());
@@ -166,7 +170,7 @@ public class CustomerController {
             res.setCustomerId(cus.getCustomerId());
             res.setCustomerName(cus.getCustomerName());
             res.setCustomerPhone(cus.getCustomerPhone());
-            res.setGender(cus.getGender().name());
+            res.setGender(cus.getGender().getDisplayName());
             res.setBirthDay(cus.getBirthday());
             res.setEmail(cus.getEmail());
             res.setAddress(cus.getAddress());
