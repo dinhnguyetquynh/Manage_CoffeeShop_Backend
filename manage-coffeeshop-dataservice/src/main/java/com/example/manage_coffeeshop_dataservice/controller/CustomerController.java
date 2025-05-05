@@ -40,7 +40,7 @@ public class CustomerController {
             res.setAccountCus(cus.getAccountCus());
             res.setPasswordCus(cus.getPasswordCus());
             res.setAccumulatedPoint(cus.getAccumulatedPoint());
-            res.setRank(cus.getRank().name());
+            res.setRank(cus.getRank_level().name());
             listRes.add(res);
         }
         return listRes;
@@ -62,7 +62,7 @@ public class CustomerController {
         res.setAccountCus(cus.getAccountCus());
         res.setPasswordCus(cus.getPasswordCus());
         res.setAccumulatedPoint(cus.getAccumulatedPoint());
-        res.setRank(cus.getRank().name());
+        res.setRank(cus.getRank_level().name());
         return res;
 
     }
@@ -85,7 +85,7 @@ public class CustomerController {
         customer.setAccountCus( req.getAccountCus() );
         customer.setPasswordCus( req.getPasswordCus() );
         customer.setAccumulatedPoint(0);
-        customer.setRank(Rank.MEMBER);
+        customer.setRank_level(Rank.MEMBER);
         Customer createdCus = customerRepository.save(customer);
         //Map customer thanfh customer res: customerId,Name,Phone;gender;
         // birthDay;email;address;accountCus;passwordCus;accumulatedPoint;rank;
@@ -101,7 +101,7 @@ public class CustomerController {
         res.setAccountCus(createdCus.getAccountCus());
         res.setPasswordCus(createdCus.getPasswordCus());
         res.setAccumulatedPoint(createdCus.getAccumulatedPoint());
-        res.setRank(createdCus.getRank().name());
+        res.setRank(createdCus.getRank_level().name());
         return res;
 
     }
@@ -150,7 +150,7 @@ public class CustomerController {
             res.setAccountCus(cus.getAccountCus());
             res.setPasswordCus(cus.getPasswordCus());
             res.setAccumulatedPoint(cus.getAccumulatedPoint());
-            res.setRank(cus.getRank().name());
+            res.setRank(cus.getRank_level().name());
         }
         return res;
 
@@ -173,7 +173,7 @@ public class CustomerController {
             res.setAccountCus(cus.getAccountCus());
             res.setPasswordCus(cus.getPasswordCus());
             res.setAccumulatedPoint(cus.getAccumulatedPoint());
-            res.setRank(cus.getRank().name());
+            res.setRank(cus.getRank_level().name());
 
         }
         return res;
