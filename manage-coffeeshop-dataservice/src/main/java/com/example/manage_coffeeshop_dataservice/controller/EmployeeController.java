@@ -66,7 +66,7 @@ public class EmployeeController {
             employeeRepository.deleteById(empId);
             return "Delete employee successfully";
         }catch (RuntimeException ex){
-            throw new RuntimeException("Delete employee failed");
+            throw new RuntimeException("Failed to delete Employee", ex);
         }
     }
 }

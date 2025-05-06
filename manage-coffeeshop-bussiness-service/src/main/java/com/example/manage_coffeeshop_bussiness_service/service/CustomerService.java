@@ -1,6 +1,5 @@
 package com.example.manage_coffeeshop_bussiness_service.service;
 
-import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerRequest;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
 import org.springframework.core.ParameterizedTypeReference;
@@ -42,7 +41,6 @@ public class CustomerService {
                 .retrieve()
                 .bodyToMono(CustomerRes.class)
                 .block();
-
     }
 
     public CustomerRes findCustomerById(int id){
@@ -68,5 +66,16 @@ public class CustomerService {
                 .bodyToMono(new ParameterizedTypeReference<List<CustomerRes>>(){})
                 .block();
 
+    }
+
+    public CustomerRes updateCustomer(int id, CustomerRequest request) {
+        return webClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/{id}")
+                        .build(id))
+                .body(Mono.just(request), CustomerRequest.class)
+                .retrieve()
+                .bodyToMono(CustomerRes.class)
+                .block();
     }
 }
