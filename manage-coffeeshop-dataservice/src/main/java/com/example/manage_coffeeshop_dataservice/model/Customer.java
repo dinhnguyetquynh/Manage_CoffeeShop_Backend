@@ -30,6 +30,9 @@ public class Customer {
     private String accountCus;
     private String passwordCus;
 
+    @OneToOne(mappedBy = "customer",cascade = CascadeType.ALL)
+    private Cart cart;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bill> bills = new ArrayList<>();
 
