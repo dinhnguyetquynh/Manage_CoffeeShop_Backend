@@ -4,7 +4,6 @@ import com.example.manage_coffeeshop_bussiness_service.dto.request.ProductReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.ProductRes;
 import com.example.manage_coffeeshop_bussiness_service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public String addProduct(@RequestBody ProductReq req) {
+    public String createProduct(@RequestBody ProductReq req) {
         return productService.createProduct(req);
     }
 

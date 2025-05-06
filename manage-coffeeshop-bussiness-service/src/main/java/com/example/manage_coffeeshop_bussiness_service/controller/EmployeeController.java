@@ -60,9 +60,11 @@ public class EmployeeController {
     public EmployeeRes findEmployeeById(@PathVariable int empId){
         return employeeService.findEmployeeById(empId);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{empId}")
     public String deleteEmployeeById(@PathVariable int empId){
+
         return employeeService.deleteEmployeeById(empId);
     }
 }
