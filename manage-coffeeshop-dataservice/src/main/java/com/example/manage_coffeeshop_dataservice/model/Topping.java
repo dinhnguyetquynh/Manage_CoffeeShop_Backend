@@ -17,11 +17,14 @@ import java.util.List;
 public class Topping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long toppingID;
+    private int toppingID;
 
     private String toppingName;
-    private Double toppingPrice;
+    private double toppingPrice;
 
-    @ManyToMany(mappedBy = "toppings")
-    private List<CartItem> cartItems = new ArrayList<>();
+    @OneToMany(mappedBy = "topping", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItemTopping> cartItemToppings = new ArrayList<>();
+
+//    @ManyToMany(mappedBy = "toppings")
+//    private List<CartItem> cartItems = new ArrayList<>();
 }

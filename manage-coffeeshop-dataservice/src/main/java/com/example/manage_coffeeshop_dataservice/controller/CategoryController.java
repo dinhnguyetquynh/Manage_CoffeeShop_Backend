@@ -61,10 +61,14 @@ public class CategoryController {
     }
     @DeleteMapping("/{category_id}")
     public String deleteCategory(@PathVariable("category_id") int id) {
-        categoryRepository.deleteById(id);
-        return "Deleted Category";
-    }
+        try {
+            categoryRepository.deleteById(id);
+            return "Deleted Category successfully";
+        } catch (RuntimeException ex) {
+            throw new RuntimeException("Failed to delete Employee",ex);
+        }
 
+    }
 
     @GetMapping("/exists")
     public ResponseEntity<Boolean> getCategoryByName(@RequestParam String name) {

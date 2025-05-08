@@ -48,14 +48,12 @@ public class OrderController {
             }
 
 
-
             Employee emp = employeeRepository.findById(Integer.valueOf(req.getEmployeeId())).orElseThrow(()->new RuntimeException("Not found employee"));
             bill.setEmployee(emp);
             bill.setBillCreationDate(req.getOrderDate());
             bill.setBillTotal(req.getOrderTotal());
             bill.setPaymentMethod(req.getPaymentMethod());
             billRepository.save(bill);
-
 
 
             List<OrderDetailReq> orderDetailReqs = req.getOrderDetails();

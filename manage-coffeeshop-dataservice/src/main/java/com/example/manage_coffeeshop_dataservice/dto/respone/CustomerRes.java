@@ -1,5 +1,6 @@
 package com.example.manage_coffeeshop_dataservice.dto.respone;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ public class CustomerRes {
     private String customerName;
     private String customerPhone;
     private String gender;
+
     private LocalDate birthDay;
     private String email;
     private String address;

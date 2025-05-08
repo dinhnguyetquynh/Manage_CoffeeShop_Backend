@@ -6,16 +6,17 @@ import com.example.manage_coffeeshop_bussiness_service.service.BillDetailService
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
+@Validated
 @RequestMapping("/api/business/bill-details")
 public class BillDetailController {
-    @Autowired
-    private BillDetailService billDetailService;
+    @Autowired private BillDetailService billDetailService;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -40,7 +41,6 @@ public class BillDetailController {
     public BillDetailRes updateDetail(@Valid @RequestBody BillDetailReq req) {
         return billDetailService.updateDetail(req);
     }
-
 
     @DeleteMapping
     @PreAuthorize("hasRole('ADMIN')")
