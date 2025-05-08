@@ -1,8 +1,9 @@
 package com.example.manage_coffeeshop_dataservice.mapper;
 
-import com.example.manage_coffeeshop_dataservice.dto.request.CartItemRequest;
 import com.example.manage_coffeeshop_dataservice.dto.respone.CartItemRes;
+import com.example.manage_coffeeshop_dataservice.dto.respone.CartToppingRes;
 import com.example.manage_coffeeshop_dataservice.model.CartItem;
+import com.example.manage_coffeeshop_dataservice.model.CartItemTopping;
 import com.example.manage_coffeeshop_dataservice.model.Topping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,22 +13,23 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface CartItemMapper {
-    @Mapping(source="cartId", target="cart.cartId")
-    @Mapping(source="productId", target="product.productId")
-    @Mapping(target = "cart", ignore = true)
-    @Mapping(target = "product", ignore = true)
-    @Mapping(target = "toppings", ignore = true)
-    CartItem toCartItem(CartItemRequest req);
 
-    @Mapping(source="cart.cartId", target="cartId")
-    @Mapping(source="product.productId", target="productId")
-    @Mapping(source="toppings", target="toppingIds")
-    CartItemRes toCartItemRes(CartItem item);
+    @Mapping(source = "cartItemId", target = "cartItemId")
+    @Mapping(source = "product.productName", target = "productName")
+    @Mapping(source = "price", target = "price")
+    @Mapping(source = "quantity", target = "quantity")
+    @Mapping(source = "size", target = "size")
+    @Mapping(source = "sweet", target = "sweet")
+    @Mapping(source = "ice", target = "ice")
+    @Mapping(target = "toppings", expression = "java(mapToppings(entity.getCartItemToppings()))")
+    CartItemRes toDto(CartItem entity);
 
-    default List<Long> toppingsToToppingIds(List<Topping> toppings) {
-        if (toppings == null) return null;
-        return toppings.stream()
-                .map(Topping::getToppingID)
+    default List<CartToppingRes> mapToppings(List<CartItemTopping> list) {
+        return list.stream()
+                .map(cit -> new CartToppingRes(
+                        cit.getTopping().getToppingName(),
+                        cit.getTopping().getToppingPrice(),
+                        cit.getQuantity()))
                 .collect(Collectors.toList());
     }
 }

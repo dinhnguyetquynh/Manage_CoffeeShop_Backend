@@ -1,61 +1,68 @@
 package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CartRequest;
+import com.example.manage_coffeeshop_bussiness_service.dto.request.CartItemRequest;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CartRes;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Service
 public class CartService {
     private final WebClient webClient;
 
-    public CartService(WebClient.Builder webClientBuilder){
-        this.webClient = webClientBuilder
-                .baseUrl("http://localhost:8080/myapp/api/carts")
-                .build();
+    public CartService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/carts").build();
+
     }
 
-    public CartRes createCart(CartRequest cartRequest) {
+    public CartRes getOrCreateCart(int customerId) {
+        return webClient.get()
+                .uri("/{customerId}", customerId)
+                .retrieve()
+                .bodyToMono(CartRes.class)
+                .block();
+    }
+
+//    public CartRes addToCart(int customerId, CartRequest req) {
+//        return webClient.post()
+//                .uri("/{customerId}/items", customerId)
+//                .bodyValue(req)
+//                .retrieve()
+//                .bodyToMono(CartRes.class)
+//                .block();
+//    }
+    public CartRes addToCart(int customerId, CartRequest req) {
         return webClient.post()
-                .body(Mono.just(cartRequest), CartRequest.class)
+                .uri("/{id}/items", customerId)
+                .bodyValue(req)
                 .retrieve()
                 .bodyToMono(CartRes.class)
                 .block();
     }
 
-    public List<CartRes> getAllCarts() {
-        return webClient.get()
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<CartRes>>(){})
-                .block();
-    }
-
-    public CartRes findCartById(Integer id) {
-        return webClient.get()
-                .uri("/{id}", id)
-                .retrieve()
-                .bodyToMono(CartRes.class)
-                .block();
-    }
-
-    public CartRes updateCart(Integer id, CartRequest req) {
+    public CartRes updateCart(int customerId, CartRequest req) {
         return webClient.put()
-                .uri("/{id}", id)
-                .body(Mono.just(req), CartRequest.class)
+                .uri("/{customerId}", customerId)
+                .bodyValue(req)
                 .retrieve()
                 .bodyToMono(CartRes.class)
                 .block();
     }
 
-    public String deleteCart(Integer id) {
-        return webClient.delete()
-                .uri("/{id}", id)
+    public CartRes updateCartItem(int customerId, Long itemId, CartItemRequest req) {
+        return webClient.put()
+                .uri("/{customerId}/items/{itemId}", customerId, itemId)
+                .bodyValue(req)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(CartRes.class)
+                .block();
+    }
+
+    public CartRes deleteCartItem(int customerId, Long itemId) {
+        return webClient.delete()
+                .uri("/{customerId}/items/{itemId}", customerId, itemId)
+                .retrieve()
+                .bodyToMono(CartRes.class)
                 .block();
     }
 }

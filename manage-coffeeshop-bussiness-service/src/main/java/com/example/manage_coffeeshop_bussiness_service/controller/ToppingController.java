@@ -7,10 +7,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/business/toppings")
 @RequiredArgsConstructor
@@ -20,8 +22,7 @@ public class ToppingController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<ToppingRes> createTopping(
-            @Valid @RequestBody ToppingRequest req) {
+    public ResponseEntity<ToppingRes> createTopping(@Valid @RequestBody ToppingRequest req) {
         ToppingRes created = toppingService.createTopping(req);
         return ResponseEntity.ok(created);
     }

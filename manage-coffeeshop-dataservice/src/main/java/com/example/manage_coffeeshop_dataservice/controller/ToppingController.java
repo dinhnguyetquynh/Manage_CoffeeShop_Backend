@@ -33,7 +33,7 @@ public class ToppingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ToppingRes> findToppingById(@PathVariable Long id) {
+    public ResponseEntity<ToppingRes> findToppingById(@PathVariable Integer id) {
         return toppingRepository.findById(id)
                 .map(toppingMapper::toToppingRes)
                 .map(ResponseEntity::ok)
@@ -42,7 +42,7 @@ public class ToppingController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ToppingRes> updateTopping(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @Valid @RequestBody ToppingRequest req) {
         return toppingRepository.findById(id).map(existing -> {
             existing.setToppingName(req.getToppingName());
@@ -53,9 +53,9 @@ public class ToppingController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTopping(@PathVariable Long id) {
+    public String deleteTopping(@PathVariable Integer id) {
         return toppingRepository.findById(id).map(topping -> {
-            if (!topping.getCartItems().isEmpty()) {
+            if (!topping.getCartItemToppings().isEmpty()) {
                 throw new RuntimeException("Topping is in use and cannot be deleted");
             }
             toppingRepository.delete(topping);
