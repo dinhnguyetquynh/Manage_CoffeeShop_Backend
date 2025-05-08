@@ -1,76 +1,159 @@
 package com.example.manage_coffeeshop_dataservice.controller;
 
 import com.example.manage_coffeeshop_dataservice.dto.request.CartRequest;
+import com.example.manage_coffeeshop_dataservice.dto.request.CartToppingRequest;
 import com.example.manage_coffeeshop_dataservice.dto.respone.CartRes;
-import com.example.manage_coffeeshop_dataservice.mapper.CartMapper;
-import com.example.manage_coffeeshop_dataservice.model.Cart;
-import com.example.manage_coffeeshop_dataservice.model.Customer;
-import com.example.manage_coffeeshop_dataservice.repository.CartItemRepository;
-import com.example.manage_coffeeshop_dataservice.repository.CartRepository;
-import com.example.manage_coffeeshop_dataservice.repository.CustomerRepository;
+import com.example.manage_coffeeshop_dataservice.dto.request.CartItemRequest;
+import com.example.manage_coffeeshop_dataservice.model.*;
+import com.example.manage_coffeeshop_dataservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/carts")
 public class CartController {
-    @Autowired private CartRepository cartRepository;
-    @Autowired private CartMapper cartMapper;
+    @Autowired
+    private CartRepository cartRepository;
+//    @Autowired private CartMapper cartMapper;
     @Autowired private CustomerRepository customerRepository;
     @Autowired private CartItemRepository cartItemRepository;
+    @Autowired private ToppingRepository toppingRepository;
+    @Autowired private ProductRepository productRepository;
 
-    @PostMapping
-    public CartRes createCart(@RequestBody CartRequest cartRequest) {
-        Customer customer = customerRepository.findById(cartRequest.getCustomerId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Customer not found with ID = " + cartRequest.getCustomerId()));
-        Cart cart = cartMapper.toCart(cartRequest);
-        cart.setCustomer(customer);
-        Cart saved = cartRepository.save(cart);
-        return cartMapper.toCartRes(saved);
+
+    @GetMapping("/{customerId}")
+    public ResponseEntity<CartRes> getOrCreateCart(@PathVariable int customerId) {
+        Cart cart = cartRepository.findByCustomerCustomerId(customerId)
+                .orElseGet(() -> {
+                    Cart c = new Cart();
+                    c.setCustomer(customerRepository.findById(customerId)
+                            .orElseThrow(() -> new RuntimeException("Customer not found")));
+                    c.setTotal(0);
+                    c.setQuantity(0);
+                    c.setShipCost(10000);
+                    c.setDiscountCode("");
+                    c.setPaymentMethod("Bank Transfer");
+                    return cartRepository.save(c);
+                });
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
 
-    @GetMapping
-    public List<CartRes> getAllCarts() {
-        return cartRepository.findAll().stream()
-                .map(cartMapper::toCartRes)
-                .toList();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CartRes> findCartById(@PathVariable Integer id) {
-        return cartRepository.findById(id)
-                .map(cartMapper::toCartRes)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CartRes> updateCart(
-            @PathVariable Integer id,
+    @PostMapping("/{customerId}/items")
+    public ResponseEntity<CartRes> addItems(
+            @PathVariable int customerId,
             @RequestBody CartRequest req) {
-        return cartRepository.findById(id).map(existing -> {
 
-            existing.setTotal(req.getTotal());
-            existing.setQuantity(req.getQuantity());
-            existing.setShipCost(req.getShipCost());
-            existing.setDiscountCode(req.getDiscountCode());
-            existing.setPaymentMethod(req.getPaymentMethod());
-            Cart saved = cartRepository.save(existing);
-            return ResponseEntity.ok(cartMapper.toCartRes(saved));
-        }).orElse(ResponseEntity.notFound().build());
+        Cart cart = cartRepository.findByCustomerCustomerId(customerId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        for (CartItemRequest cri : req.getItems()) {
+            Product p = productRepository.findById(cri.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            CartItem ci = new CartItem();
+            ci.setCart(cart);
+            ci.setProduct(p);
+            ci.setSize(cri.getSize());
+            ci.setQuantity(cri.getQuantity());
+            ci.setSweet(cri.getSweet());
+            ci.setIce(cri.getIce());
+
+            for (CartToppingRequest tr : cri.getToppings()) {
+                Topping t = toppingRepository.findByToppingName(tr.getToppingName())
+                        .orElseThrow(() -> new RuntimeException("Topping not found: " + tr.getToppingName()));
+                CartItemTopping cit = new CartItemTopping(ci, t, tr.getQuantity());
+                ci.getCartItemToppings().add(cit);
+            }
+
+            // compute price: product + sum(toppingPrice * toppingQty) times itemQty
+            double base = p.getProductPrice() * cri.getQuantity();
+            double toppingSum = ci.getCartItemToppings().stream()
+                    .mapToDouble(cit -> cit.getTopping().getToppingPrice() * cit.getQuantity() * cri.getQuantity())
+                    .sum();
+            ci.setPrice(base + toppingSum);
+
+            cart.getCartItems().add(ci);
+        }
+
+        // Recalculate cart totals
+        int qty = cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum();
+        double sum = cart.getCartItems().stream().mapToDouble(CartItem::getPrice).sum();
+        cart.setQuantity(qty);
+        cart.setTotal(sum + cart.getShipCost());
+        cart.setDiscountCode(req.getDiscountCode());
+        cart.setPaymentMethod(req.getPaymentMethod());
+        cart = cartRepository.save(cart);
+
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCart(@PathVariable Integer id) {
-        return cartRepository.findById(id).map(cart -> {
-            cartItemRepository.deleteAllByCart(cart);
-            cartRepository.delete(cart);
-            return ResponseEntity.ok("Deleted Cart Successfully");
-        }).orElseThrow(() -> new RuntimeException("Cart not found"));
+    @PutMapping("/{customerId}")
+    public ResponseEntity<CartRes> updateCart(@PathVariable int customerId,
+                                              @RequestBody CartRequest req) {
+        Cart cart = cartRepository.findByCustomerCustomerId(customerId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+        cart.setDiscountCode(req.getDiscountCode());
+        cart.setPaymentMethod(req.getPaymentMethod());
+        cart = cartRepository.save(cart);
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
+
+    @PutMapping("/{customerId}/items/{itemId}")
+    public ResponseEntity<CartRes> updateCartItem(
+            @PathVariable int customerId,
+            @PathVariable Long itemId,
+            @RequestBody CartItemRequest req) {
+
+        Cart cart = cartRepository.findByCustomerCustomerId(customerId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        CartItem item = cart.getCartItems().stream()
+                .filter(ci -> ci.getCartItemId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        // 1) Cập nhật thông tin cơ bản
+        item.setQuantity(req.getQuantity());
+        item.setSize(req.getSize());
+        item.setSweet(req.getSweet());
+        item.setIce(req.getIce());
+
+        // 2) Xóa sạch CartItemTopping cũ
+        item.getCartItemToppings().clear();
+
+        // 3) Thêm lại CartItemTopping mới từ request
+        for (CartToppingRequest tr : req.getToppings()) {
+            Topping t = toppingRepository.findByToppingName(tr.getToppingName())
+                    .orElseThrow(() -> new RuntimeException("Topping not found: " + tr.getToppingName()));
+            CartItemTopping cit = new CartItemTopping(item, t, tr.getQuantity());
+            item.getCartItemToppings().add(cit);
+        }
+
+        // 4) Tính lại price của item
+        double base = item.getProduct().getProductPrice() * item.getQuantity();
+        double toppingSum = item.getCartItemToppings().stream()
+                .mapToDouble(cit -> cit.getTopping().getToppingPrice() * cit.getQuantity() * item.getQuantity())
+                .sum();
+        item.setPrice(base + toppingSum);
+
+        // 5) Save cart mới
+        cartRepository.save(cart);
+
+        // 6) Trả về CartRes
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
+    }
+
+
+    @DeleteMapping("/{customerId}/items/{itemId}")
+    public ResponseEntity<CartRes> deleteCartItem(
+            @PathVariable int customerId,
+            @PathVariable Long itemId) {
+        cartItemRepository.deleteById(itemId);
+        Cart cart = cartRepository.findByCustomerCustomerId(customerId).get();
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
+    }
+
 
 }

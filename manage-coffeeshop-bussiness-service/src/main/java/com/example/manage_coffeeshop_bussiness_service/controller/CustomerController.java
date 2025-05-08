@@ -18,14 +18,11 @@ import java.util.List;
 @Validated
 @RequestMapping("/api/business/customer")
 public class CustomerController {
-    @Autowired
-    private CustomerService customerService;
-    @Autowired
-    private AuthenticationServiceCus authenticationServiceCus;
-
+    @Autowired private CustomerService customerService;
+    @Autowired private AuthenticationServiceCus authenticationServiceCus;
 
     @PostMapping
-    public ResponseEntity<CustomerRes> createCustomer(@RequestBody CustomerRequest customerReq) {
+    public ResponseEntity<CustomerRes> createCustomer(@Valid @RequestBody CustomerRequest customerReq) {
         CustomerRes createdCustomer = customerService.createCustomer(customerReq);
         return ResponseEntity.ok(createdCustomer); // Trả JSON object
     }
