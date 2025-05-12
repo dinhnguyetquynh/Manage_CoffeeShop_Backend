@@ -25,6 +25,9 @@ public class Topping {
     @OneToMany(mappedBy = "topping", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItemTopping> cartItemToppings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "topping", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderOnlineDetailTopping> orderOnlineDetailToppings = new ArrayList<>();
+
 //    @ManyToMany(mappedBy = "toppings")
 //    private List<CartItem> cartItems = new ArrayList<>();
 }
