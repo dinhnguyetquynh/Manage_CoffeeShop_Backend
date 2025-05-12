@@ -37,7 +37,12 @@ public class SecurityConfig {
             "/api/business/payment/zalopay/callback"
     };
 
-    public final String[] PL_GETENDPOINTS = {"/api/business/products","/api/business/products/{id}"};
+    public final String[] PL_GETENDPOINTS = {
+            "/api/business/products",
+            "/api/business/products/{id}",
+            "/api/business/products/category/{categoryId}",
+            "/api/business/categories"
+    };
     //Ngoaại trừ những api public thì các api còn lại phải được xác thực = jwt
     @Value("${jwt.signerKey}")
     private String signerKey;
