@@ -17,7 +17,7 @@ public class BillRequest {
 
     @NotNull(message = "billCreationDate không được để trống")
     @PastOrPresent(message = "ngày không được trong tương lai")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate billCreationDate;
 
     @Positive(message = "billTotal phải là số dương")
