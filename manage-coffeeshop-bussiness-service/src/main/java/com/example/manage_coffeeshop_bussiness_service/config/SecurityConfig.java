@@ -33,7 +33,8 @@ public class SecurityConfig {
             "/api/business/authCustomer/login",
             "/api/business/customer",
             "/api/business/authCustomer/send-otp",
-            "/api/business/authCustomer/verify-otp"
+            "/api/business/authCustomer/verify-otp",
+            "/api/business/payment/zalopay/callback"
     };
 
     public final String[] PL_GETENDPOINTS = {"/api/business/products","/api/business/products/{id}"};
