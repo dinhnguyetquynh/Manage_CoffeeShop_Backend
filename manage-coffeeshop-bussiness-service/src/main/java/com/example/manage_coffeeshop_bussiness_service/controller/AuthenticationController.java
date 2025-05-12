@@ -14,12 +14,14 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -31,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/api/business/auth")
 @RequiredArgsConstructor
+@Validated
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class AuthenticationController {
     AuthenticationService authenticationService;
@@ -52,7 +55,7 @@ public class AuthenticationController {
 //    public AuthenticationRes authenticate(@Valid @RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response) {
 //        return authenticationService.authenticate(authenticationReq,response);
 //=======
-    public AuthenticationRes  authenticate(@RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response) {
+    public AuthenticationRes  authenticate(@Valid @RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response) {
         String username = authenticationReq.getUsername();
 
         // Kiểm tra số lần đăng nhập và thời gian
@@ -85,7 +88,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/introspect")
-    public IntrospectRes introspect(@RequestBody IntrospectReq introspectReq) throws ParseException, JOSEException {
+    public IntrospectRes introspect(@Valid @RequestBody IntrospectReq introspectReq) throws ParseException, JOSEException {
         return authenticationService.introspect(introspectReq);
 
     }
