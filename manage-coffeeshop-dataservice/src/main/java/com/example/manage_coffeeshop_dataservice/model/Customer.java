@@ -1,5 +1,8 @@
 package com.example.manage_coffeeshop_dataservice.model;
 
+import com.example.manage_coffeeshop_dataservice.enums.Gender;
+import com.example.manage_coffeeshop_dataservice.enums.Rank;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +22,7 @@ public class Customer {
     private String customerPhone;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     private String email;
     private String address;

@@ -1,4 +1,4 @@
-package com.example.manage_coffeeshop_dataservice.model;
+package com.example.manage_coffeeshop_dataservice.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

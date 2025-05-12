@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"cart", "product", "toppings"}) // tránh vòng lặp
+@ToString(exclude = {"cart", "product", "toppings"})
 @EqualsAndHashCode(exclude = {"cart", "product", "toppings"})
 public class CartItem {
     @Id
@@ -22,8 +22,8 @@ public class CartItem {
     private String size;
     private Double price;
     private Integer quantity;
-    private Integer sweet;
-    private Integer ice;
+    private String sweet;
+    private String ice;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
@@ -33,11 +33,14 @@ public class CartItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToMany
-    @JoinTable(
-            name = "cartitem_topping",
-            joinColumns = @JoinColumn(name = "cartitem_id"),
-            inverseJoinColumns = @JoinColumn(name = "topping_id")
-    )
-    private List<Topping> toppings = new ArrayList<>();
+    @OneToMany(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItemTopping> cartItemToppings = new ArrayList<>();
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "cartitem_topping",
+//            joinColumns = @JoinColumn(name = "cartitem_id"),
+//            inverseJoinColumns = @JoinColumn(name = "topping_id")
+//    )
+//    private List<Topping> toppings = new ArrayList<>();
 }

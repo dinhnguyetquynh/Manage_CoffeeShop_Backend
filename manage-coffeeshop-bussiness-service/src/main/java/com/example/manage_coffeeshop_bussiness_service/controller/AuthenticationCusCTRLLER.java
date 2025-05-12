@@ -9,16 +9,19 @@ import com.example.manage_coffeeshop_bussiness_service.service.AuthenticationSer
 import com.example.manage_coffeeshop_bussiness_service.service.CustomerService;
 import com.example.manage_coffeeshop_bussiness_service.service.OtpService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:3000",allowCredentials = "true")
 @RestController
+@Validated
 @RequestMapping("/api/business/authCustomer")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
@@ -31,19 +34,19 @@ public class AuthenticationCusCTRLLER {
 
 
     @PostMapping("/login")
-    public AuthenticationRes authenticateForCus(@RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response){
+    public AuthenticationRes authenticateForCus(@Valid @RequestBody AuthenticationRequest authenticationReq, HttpServletResponse response){
         return authenticationServiceCus.authenticate(authenticationReq,response);
     }
 
 
     @PostMapping("/send-otp")
-    public ResponseEntity<String> sendOtp(@RequestBody CustomerRequest customer) {
+    public ResponseEntity<String> sendOtp(@Valid @RequestBody CustomerRequest customer) {
         otpService.sendOtp(customer);
         return ResponseEntity.ok("OTP sent to email");
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestBody OtpRequest otpRequest) {
+    public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpRequest otpRequest) {
         boolean isValid = otpService.verifyOtp(otpRequest.getEmail(), otpRequest.getOtp());
         if (!isValid) {
             return ResponseEntity.badRequest().body("OTP KHONG HOP LE");

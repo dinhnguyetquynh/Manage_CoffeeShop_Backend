@@ -4,16 +4,19 @@ import com.example.manage_coffeeshop_dataservice.dto.request.CustomerRequest;
 import com.example.manage_coffeeshop_dataservice.dto.respone.CustomerRes;
 import com.example.manage_coffeeshop_dataservice.mapper.CustomerMapper;
 import com.example.manage_coffeeshop_dataservice.model.Customer;
-import com.example.manage_coffeeshop_dataservice.model.Gender;
-import com.example.manage_coffeeshop_dataservice.model.Rank;
+import com.example.manage_coffeeshop_dataservice.enums.Gender;
+import com.example.manage_coffeeshop_dataservice.enums.Rank;
 import com.example.manage_coffeeshop_dataservice.repository.CustomerRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
@@ -21,7 +24,7 @@ public class CustomerController {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private CustomerMapper mapper;
+    private CustomerMapper customerMapper;
 
     // GET all customers
     @GetMapping
@@ -112,16 +115,29 @@ public class CustomerController {
 
     // UPDATE customer
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestBody CustomerRequest request) {
+    public ResponseEntity<CustomerRes> updateCustomer(
+            @PathVariable Integer id,
+            @Valid @RequestBody CustomerRequest request) {
+
         return customerRepository.findById(id)
-                .map(existingCustomer -> {
-                    existingCustomer.setCustomerName(request.getCustomerName());
-                    existingCustomer.setCustomerPhone(request.getCustomerPhone());
-                    Customer updatedCustomer = customerRepository.save(existingCustomer);
-                    return ResponseEntity.ok(updatedCustomer);
+                .map(existing -> {
+                    // Cập nhật tất cả các trường
+                    existing.setCustomerName(request.getCustomerName());
+                    existing.setCustomerPhone(request.getCustomerPhone());
+                    existing.setGender(Gender.fromDisplayName(request.getGender()));
+                    existing.setBirthday(request.getBirthDay());
+                    existing.setEmail(request.getEmail());
+                    existing.setAddress(request.getAddress());
+                    existing.setAccountCus(request.getAccountCus());
+                    existing.setPasswordCus(request.getPasswordCus());
+
+                    Customer saved = customerRepository.save(existing);
+                    CustomerRes res = customerMapper.toCustomerRes(saved);
+                    return ResponseEntity.ok(res);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 
     // DELETE customer
     @DeleteMapping("/{id}")
