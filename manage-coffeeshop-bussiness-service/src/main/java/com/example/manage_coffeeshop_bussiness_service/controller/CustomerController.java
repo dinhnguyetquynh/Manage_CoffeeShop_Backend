@@ -1,29 +1,28 @@
 package com.example.manage_coffeeshop_bussiness_service.controller;
 
-import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerRequest;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
 import com.example.manage_coffeeshop_bussiness_service.service.AuthenticationServiceCus;
 import com.example.manage_coffeeshop_bussiness_service.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000",allowCredentials = "true")
 @RestController
+@Validated
 @RequestMapping("/api/business/customer")
 public class CustomerController {
-    @Autowired
-    private CustomerService customerService;
-    @Autowired
-    private AuthenticationServiceCus authenticationServiceCus;
-
+    @Autowired private CustomerService customerService;
+    @Autowired private AuthenticationServiceCus authenticationServiceCus;
 
     @PostMapping
-    public ResponseEntity<CustomerRes> createCustomer(@RequestBody CustomerRequest customerReq) {
+    public ResponseEntity<CustomerRes> createCustomer(@Valid @RequestBody CustomerRequest customerReq) {
         CustomerRes createdCustomer = customerService.createCustomer(customerReq);
         return ResponseEntity.ok(createdCustomer); // Trả JSON object
     }
@@ -45,6 +44,7 @@ public class CustomerController {
     public ResponseEntity<String> deleteCustomer(@PathVariable int id){
         return ResponseEntity.ok(customerService.deleteCustomer(id));
     }
+
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
     public ResponseEntity<List<CustomerRes>> getAllCustomer(){
@@ -71,4 +71,12 @@ public class CustomerController {
 
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerRes> updateCustomer(
+            @PathVariable int id,
+            @Valid @RequestBody CustomerRequest req) {
+        CustomerRes updated = customerService.updateCustomer(id, req);
+        return ResponseEntity.ok(updated);
+    }
 }
