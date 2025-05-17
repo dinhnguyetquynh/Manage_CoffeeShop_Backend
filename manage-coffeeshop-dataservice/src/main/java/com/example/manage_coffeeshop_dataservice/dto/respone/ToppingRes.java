@@ -9,12 +9,14 @@ public class ToppingRes {
     private Integer toppingID;
     private String toppingName;
     private Double toppingPrice;
+    private int quantity;
 
     public static ToppingRes fromEntity(Topping topping) {
         ToppingRes toppingRes = new ToppingRes();
         toppingRes.toppingID = topping.getToppingID();
         toppingRes.toppingName = topping.getToppingName();
         toppingRes.toppingPrice = topping.getToppingPrice();
+
         return toppingRes;
     }
 }

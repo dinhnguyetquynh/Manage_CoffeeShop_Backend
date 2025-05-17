@@ -18,4 +18,6 @@ public class CategoryReq {
     @Size(max = 255, message = "Mô tả tối đa 255 ký tự")
     private String categoryDescription;
 
+    private String categoryClassify;
+
 }

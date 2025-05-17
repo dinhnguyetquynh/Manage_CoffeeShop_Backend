@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class OrderOnlineDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_detail_id")
     private int orderDetailID;
     @ManyToOne
     @JoinColumn(name="product_id")
@@ -26,6 +28,7 @@ public class OrderOnlineDetail {
     private int quantity;
     private String sweet;
     private String ice;
+
     @OneToMany(mappedBy = "orderOnlineDetail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderOnlineDetailTopping> orderOnlineDetailToppings = new ArrayList<>();
 

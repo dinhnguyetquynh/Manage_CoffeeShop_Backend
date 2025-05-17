@@ -1,4 +1,4 @@
-package com.example.manage_coffeeshop_dataservice.dto.request;
+package com.example.manage_coffeeshop_bussiness_service.dto.respone;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -7,7 +7,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class OrderOnlineRequest {
+public class OrderOnlineRes {
+    private int orderOnlID;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime deliveryTime;
     private String deliveryAddress;
@@ -16,6 +17,6 @@ public class OrderOnlineRequest {
     private String paymentMethod;
     private String transactionCode;
     private int customerId;
-    private List<OrderOnlineDetailReq> orderDetails;
-
+    private Boolean paid;
+    private List<OrderOnlineDetailRes> ord_details;
 }

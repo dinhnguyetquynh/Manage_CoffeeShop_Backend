@@ -24,7 +24,7 @@ public class OrderOnlineDetailTopping {
 
     @ManyToOne
     @MapsId("toppingId")
-    @JoinColumn(name = "topping_id")
+    @JoinColumn(name = "toppingid")
     private Topping topping;
 
     private int quantity;

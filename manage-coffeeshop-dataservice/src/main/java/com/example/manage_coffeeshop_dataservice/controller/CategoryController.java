@@ -32,6 +32,7 @@ public class CategoryController {
             cate.setCategoryId(category.getCategoryId());
             cate.setCategoryName(category.getCategoryName());
             cate.setCategoryDescription(category.getCategoryDescription());
+            cate.setCategoryClassify(category.getCategoryClassify());
             return cate;
         }).collect(Collectors.toList());
     }
@@ -41,14 +42,15 @@ public class CategoryController {
         Category category = new Category();
         category.setCategoryName(req.getCategoryName());
         category.setCategoryDescription(req.getCategoryDescription());
+        category.setCategoryClassify(req.getCategoryClassify());
 
         return categoryRepository.save(category);
 
     }
 
     @GetMapping("/{category_id}")
-    public CategoryRes getCategoryById(@PathVariable int id) {
-        Category categoryFound = categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category not found"));
+    public CategoryRes getCategoryById(@PathVariable int category_id) {
+        Category categoryFound = categoryRepository.findById(category_id).orElseThrow(()-> new RuntimeException("Category not found"));
         return categoryMapper.toCategoryRes(categoryFound);
     }
 
@@ -57,6 +59,7 @@ public class CategoryController {
         Category category = categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category not found"));
         category.setCategoryName(req.getCategoryName());
         category.setCategoryDescription(req.getCategoryDescription());
+        category.setCategoryClassify(req.getCategoryClassify());
         return categoryMapper.toCategoryRes(categoryRepository.save(category));
     }
     @DeleteMapping("/{category_id}")

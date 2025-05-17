@@ -150,9 +150,19 @@ public class CartController {
     public ResponseEntity<CartRes> deleteCartItem(
             @PathVariable int customerId,
             @PathVariable Long itemId) {
+
+        CartItem item = cartItemRepository.findById(itemId).orElseThrow(()->new RuntimeException("CartItem not found"));
+        double unitPrice = item.getPrice();
+        int quantity = item.getQuantity();
+
         cartItemRepository.deleteById(itemId);
-        Cart cart = cartRepository.findByCustomerCustomerId(customerId).get();
-        return ResponseEntity.ok(CartRes.fromEntity(cart));
+        Cart cart = cartRepository.findByCustomerCustomerId(customerId).orElseThrow(()->new RuntimeException("Cart not found"));
+        cart.setTotal(cart.getTotal()-unitPrice);
+        cart.setQuantity(cart.getQuantity()-quantity);
+
+        Cart savedCart = cartRepository.save(cart);
+
+        return ResponseEntity.ok(CartRes.fromEntity(savedCart));
     }
 
 

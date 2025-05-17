@@ -17,6 +17,7 @@ import java.util.List;
 public class Topping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "toppingid")
     private int toppingID;
 
     private String toppingName;
