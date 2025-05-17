@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"cart", "product", "toppings"})
+@ToString
 @EqualsAndHashCode(exclude = {"cart", "product", "toppings"})
 public class CartItem {
     @Id
@@ -24,23 +24,17 @@ public class CartItem {
     private Integer quantity;
     private String sweet;
     private String ice;
-
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
-
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
+    @ToString.Exclude
     @OneToMany(mappedBy = "cartItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItemTopping> cartItemToppings = new ArrayList<>();
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "cartitem_topping",
-//            joinColumns = @JoinColumn(name = "cartitem_id"),
-//            inverseJoinColumns = @JoinColumn(name = "topping_id")
-//    )
-//    private List<Topping> toppings = new ArrayList<>();
+
 }

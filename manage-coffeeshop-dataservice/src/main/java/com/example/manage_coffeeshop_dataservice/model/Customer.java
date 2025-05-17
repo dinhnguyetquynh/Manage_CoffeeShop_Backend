@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -13,6 +14,7 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @Entity
+@ToString
 public class Customer {
     //hoten,sdt,  gioitinh, ngaysinh,email,diachi, rank, diem tich luy
     @Id
@@ -34,9 +36,10 @@ public class Customer {
     private String accountCus;
     private String passwordCus;
 
+    @ToString.Exclude
     @OneToOne(mappedBy = "customer",cascade = CascadeType.ALL)
     private Cart cart;
-
+    @ToString.Exclude
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bill> bills = new ArrayList<>();
 
