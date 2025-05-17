@@ -1,4 +1,4 @@
-package com.example.manage_coffeeshop_dataservice.dto.request;
+package com.example.manage_coffeeshop_bussiness_service.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

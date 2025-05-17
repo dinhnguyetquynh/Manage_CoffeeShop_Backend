@@ -13,6 +13,7 @@ public class CategoryRes {
     private int categoryId;
     private String categoryName;
     private String categoryDescription;
+    private String categoryClassify;
 
 
 }
