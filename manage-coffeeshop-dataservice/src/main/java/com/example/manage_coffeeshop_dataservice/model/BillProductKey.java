@@ -17,5 +17,4 @@ public class BillProductKey implements Serializable {
     private int billId;
     @Column(name="product_id")
     private int productId;
-
 }

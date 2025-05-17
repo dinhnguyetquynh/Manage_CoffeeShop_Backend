@@ -31,7 +31,6 @@ public class BillDetailController {
     @Autowired
     private BillDetailMapper billDetailMapper;
 
-    // GET all bill details
     @GetMapping
     public List<BillDetailRes> getAllBillDetails() {
         return billDetailRepository.findAll().stream()
@@ -39,7 +38,6 @@ public class BillDetailController {
                 .collect(Collectors.toList());
     }
 
-    // GET all details for a bill
     @GetMapping("/bill/{billId}")
     public List<BillDetailRes> getDetailsByBillId(@PathVariable int billId) {
         return billDetailRepository.findAllByIdBillId(billId).stream()
@@ -87,7 +85,6 @@ public class BillDetailController {
     }
 
 
-    // DELETE bill detail
     @DeleteMapping
     public ResponseEntity<String> deleteDetail(@RequestParam int billId,
                                                @RequestParam int productId) {

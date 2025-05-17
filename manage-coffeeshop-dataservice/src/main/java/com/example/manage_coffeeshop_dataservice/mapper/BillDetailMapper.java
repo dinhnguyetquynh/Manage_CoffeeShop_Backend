@@ -13,5 +13,4 @@ public interface BillDetailMapper {
     @Mapping(source = "id.billId", target = "billId")
     @Mapping(source = "id.productId", target = "productId")
     BillDetailRes toBillDetailRes(BillDetail billDetail);
-
 }

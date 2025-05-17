@@ -4,8 +4,4 @@ public enum Rank {
        MEMBER,
        VIP,
        DIAMOND
-
-
-
-
 }

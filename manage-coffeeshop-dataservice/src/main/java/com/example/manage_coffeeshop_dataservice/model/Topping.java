@@ -12,8 +12,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"cartItems"}) // tránh vòng lặp khi log
-@EqualsAndHashCode(exclude = {"cartItems"}) // tránh lỗi khi so sánh object
+@ToString(exclude = {"cartItems"})
+@EqualsAndHashCode(exclude = {"cartItems"})
 public class Topping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,5 @@ public class Topping {
 
     @OneToMany(mappedBy = "topping", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItemTopping> cartItemToppings = new ArrayList<>();
-
-//    @ManyToMany(mappedBy = "toppings")
-//    private List<CartItem> cartItems = new ArrayList<>();
+    
 }

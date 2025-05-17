@@ -11,7 +11,6 @@ public class CustomerRes {
     private String customerName;
     private String customerPhone;
     private String gender;
-
     private LocalDate birthDay;
     private String email;
     private String address;

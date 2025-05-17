@@ -12,4 +12,3 @@ public class ProductRes {
     private String productDescription;
     private int categoryId;
 }
-

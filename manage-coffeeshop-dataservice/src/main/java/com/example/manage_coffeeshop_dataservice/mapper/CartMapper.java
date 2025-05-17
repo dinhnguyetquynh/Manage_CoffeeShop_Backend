@@ -10,6 +10,5 @@ import org.mapstruct.Mapping;
 public interface CartMapper {
     Cart toCart(CartRequest req);
     @Mapping(source="customer.customerId", target="customerId")
-    CartRes toCartRes(Cart entity);
+    CartRes toCartRes(Cart cart);
 }
-

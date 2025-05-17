@@ -26,5 +26,4 @@ public enum Gender {
         }
         throw new IllegalArgumentException("Unknown gender: " + displayName);
     }
-
 }

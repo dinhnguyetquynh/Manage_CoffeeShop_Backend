@@ -52,8 +52,7 @@ public class ToppingController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTopping(@PathVariable Long id) {
-        toppingService.deleteTopping(id);
-        return ResponseEntity.noContent().build();
+    public String deleteTopping(@PathVariable Long id) {
+        return toppingService.deleteTopping(id);
     }
 }

@@ -14,5 +14,4 @@ public interface CustomerMapper {
     @Mapping(source = "birthday", target = "birthDay")
     @Mapping(source = "rank_level", target = "rank")
     CustomerRes toCustomerRes(Customer cus);
-
 }

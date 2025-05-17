@@ -39,5 +39,4 @@ public class BillDetail {
         BillDetail that = (BillDetail) o;
         return Objects.equals(id, that.id);
     }
-
 }

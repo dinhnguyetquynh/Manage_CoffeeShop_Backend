@@ -34,7 +34,6 @@ public class BillController {
     @Autowired
     private BillMapper billMapper;
 
-    // GET all bills
     @GetMapping
     public List<BillRes> getAllBills() {
         return billRepository.findAll().stream()
@@ -42,7 +41,6 @@ public class BillController {
                 .collect(Collectors.toList());
     }
 
-    // GET bill by ID
     @GetMapping("/{id}")
     public ResponseEntity<BillRes> getBillById(@PathVariable Integer id) {
         return billRepository.findById(id)
@@ -50,7 +48,6 @@ public class BillController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // CREATE new bill with custom date format and success message
     @PostMapping
     public ResponseEntity<BillRes> createBill(@RequestBody BillRequest request) {
         try {
@@ -70,7 +67,6 @@ public class BillController {
         }
     }
 
-    // UPDATE bill
     @PutMapping("/{id}")
     public ResponseEntity<BillRes> updateBill(@PathVariable Integer id, @Valid @RequestBody BillRequest request) {
         return billRepository.findById(id)
@@ -95,7 +91,6 @@ public class BillController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // DELETE bill with custom success message
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBill(@PathVariable Integer id) {

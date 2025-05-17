@@ -29,5 +29,5 @@ public class CartRequest {
     @NotBlank(message = "Phương thức thanh toán không được để trống")
 //    @Pattern(regexp = "CASH|CARD|PAYPAL", message = "Phương thức thanh toán phải là CASH, CARD hoặc PAYPAL")
     private String paymentMethod;
-//    private List<CartItemRequest> items;
+    private List<CartItemRequest> items;
 }

@@ -11,7 +11,4 @@ import java.util.Optional;
 public interface ToppingRepository extends JpaRepository<Topping, Integer> {
     boolean existsByToppingName(String name);
     Optional<Topping> findByToppingName(String name);
-
-
-
 }

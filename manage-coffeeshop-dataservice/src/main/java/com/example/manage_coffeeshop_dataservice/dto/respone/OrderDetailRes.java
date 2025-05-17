@@ -11,7 +11,6 @@ public class OrderDetailRes {
     private int productId;
     private int productQuantity;
     private double subTotal;
-
     private String productName;
     private double productPrice;
 }

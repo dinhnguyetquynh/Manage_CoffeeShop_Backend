@@ -33,7 +33,7 @@ public class CartService {
 //    }
     public CartRes addToCart(int customerId, CartRequest req) {
         return webClient.post()
-                .uri("/{id}/items", customerId)
+                .uri("/{customerId}/items", customerId)
                 .bodyValue(req)
                 .retrieve()
                 .bodyToMono(CartRes.class)
