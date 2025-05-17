@@ -16,6 +16,10 @@ public class Category {
     private String categoryName;
     private String categoryDescription;
 
+    private String categoryClassify;
+
+
+
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Product> products;
 
@@ -23,5 +27,13 @@ public class Category {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.categoryDescription = categoryDescription;
+    }
+
+    public Category(int categoryId, String categoryName, String categoryDescription, String categoryClassify, List<Product> products) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.categoryDescription = categoryDescription;
+        this.categoryClassify = categoryClassify;
+        this.products = products;
     }
 }

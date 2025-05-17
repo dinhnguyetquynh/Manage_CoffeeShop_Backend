@@ -11,7 +11,7 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"billDetails", "category", "cartItems"})
+@ToString(exclude = {"billDetails", "category", "cartItems","ordOnlDetails"})
 
 public class Product {
     @Id
@@ -34,6 +34,10 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CartItem> cartItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<OrderOnlineDetail> ordOnlDetails = new ArrayList<>();
+
 
     public Product(int productId, String productName, double productPrice, int productInventoryQuantity, String productImg, Category category) {
         this.productId = productId;

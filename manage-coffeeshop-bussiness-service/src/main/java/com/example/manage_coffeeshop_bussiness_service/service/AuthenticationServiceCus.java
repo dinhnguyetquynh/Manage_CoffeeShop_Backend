@@ -83,11 +83,6 @@ public class AuthenticationServiceCus {
                 .build();
 
     }
-
-
-
-
-
     public CustomerRes findCustomerByAccount(AuthenticationRequest req) {
         System.out.println("Request is: " + req.getUsername());
         return webClient.get()
