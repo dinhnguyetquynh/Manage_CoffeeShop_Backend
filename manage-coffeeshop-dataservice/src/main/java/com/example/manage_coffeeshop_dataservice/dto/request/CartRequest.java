@@ -7,5 +7,5 @@ import java.util.List;
 public class CartRequest {
     private String discountCode;
     private String paymentMethod;
-//    private List<CartItemRequest> items;
+    private List<CartItemRequest> items;
 }
