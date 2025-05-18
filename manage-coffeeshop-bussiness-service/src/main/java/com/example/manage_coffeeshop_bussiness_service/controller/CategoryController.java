@@ -35,7 +35,7 @@ public class CategoryController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public String deleteCategory(@PathVariable int id){
         return categoryService.deleteCategory(id);
     }
