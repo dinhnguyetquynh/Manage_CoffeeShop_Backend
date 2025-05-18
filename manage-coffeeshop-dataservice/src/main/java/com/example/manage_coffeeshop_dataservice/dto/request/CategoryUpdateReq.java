@@ -13,4 +13,6 @@ public class CategoryUpdateReq {
 
     @NotBlank(message = "Category description không được để trống")
     private String categoryDescription;
+
+    private String categoryClassify;
 }
