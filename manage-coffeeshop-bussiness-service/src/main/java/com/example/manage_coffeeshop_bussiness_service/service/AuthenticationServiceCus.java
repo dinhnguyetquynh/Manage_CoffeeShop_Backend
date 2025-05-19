@@ -5,13 +5,16 @@ import com.example.manage_coffeeshop_bussiness_service.dto.request.Authenticatio
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.AuthenticationRes;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
 
+import com.example.manage_coffeeshop_bussiness_service.dto.respone.EmployeeRes;
 import com.example.manage_coffeeshop_bussiness_service.enums.Role;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.experimental.NonFinal;
 import net.minidev.json.JSONObject;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.util.retry.Retry;
 
+import java.text.ParseException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -141,4 +145,21 @@ public class AuthenticationServiceCus {
             throw new RuntimeException("Invalid token", e);
         }
     }
+
+    public String extractRefreshTokenFromToken(HttpServletRequest request) throws ParseException, JOSEException {
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null){
+            for(Cookie cookie:cookies){
+                if("refreshToken".equals(cookie.getName())){
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+
+    }
+
+
+
+
 }

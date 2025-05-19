@@ -80,7 +80,7 @@ public class AuthenticationController {
         if (attempt.getAttempts() >= MAX_ATTEMPTS) {
             return true;
         }
-//>>>>>>> Stashed changes
+
 
         // Cập nhật số lần đăng nhập
         loginAttempts.put(username, new LoginAttempt(attempt.getAttempts() + 1, System.currentTimeMillis()));
