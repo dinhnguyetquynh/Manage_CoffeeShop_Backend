@@ -11,7 +11,7 @@ public class CustomerRes {
     private String customerName;
     private String customerPhone;
     private String gender;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthDay;
     private String email;
     private String address;

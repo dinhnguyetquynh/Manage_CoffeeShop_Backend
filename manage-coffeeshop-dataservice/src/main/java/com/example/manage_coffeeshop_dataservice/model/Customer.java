@@ -42,6 +42,9 @@ public class Customer {
     @ToString.Exclude
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bill> bills = new ArrayList<>();
+    @ToString.Exclude
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TransactionHistory> history;
 
     public Customer(int customerId, String customerName, String customerPhone, Gender gender, LocalDate birthday, String email, String address, int accumulatedPoint, Rank rank_level, String accountCus, String passwordCus) {
         this.customerId = customerId;

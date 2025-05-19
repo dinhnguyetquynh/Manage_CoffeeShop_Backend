@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,8 @@ public class OrderOnlineSePay {
     @Autowired
     private ToppingRepository toppingRepository;
 
+    @Autowired
+    private TransactionHistoryRepository transactionHistoryRepository;
 
     OrderOnlineMapper2 mapper = new OrderOnlineMapper2();
 
@@ -149,6 +152,26 @@ public class OrderOnlineSePay {
             order.setTransactionCode(request.getTransactionCode());
             order.setPaid(false);
             order.setOrderDate(LocalDate.now());
+            //set diem cho khach hang
+            if(order.getTotalOrd()>=20000 && order.getTotalOrd()<30000){
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint()+2);
+            } else if(order.getTotalOrd()>=30000 && order.getTotalOrd()<40000){
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint()+3);
+            }else if(order.getTotalOrd()>=40000 && order.getTotalOrd()<50000){
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint()+4);
+            }else if(order.getTotalOrd()>=50000 && order.getTotalOrd()<60000){
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint()+5);
+            }else if(order.getTotalOrd()>=60000 && order.getTotalOrd()<70000) {
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint() + 6);
+            }else if(order.getTotalOrd()>=70000 && order.getTotalOrd()<80000) {
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint() + 8);
+            }else if(order.getTotalOrd()>=80000 && order.getTotalOrd()<90000) {
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint() + 8);
+            }else if(order.getTotalOrd()>=90000&& order.getTotalOrd()<100000 ) {
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint() + 9);
+            }else if(order.getTotalOrd()>=100000) {
+                customer.setAccumulatedPoint(customer.getAccumulatedPoint() + 10);
+            }
             order.setCustomer(customer);
 
             List<OrderOnlineDetail> orderDetails = new ArrayList<>();
@@ -238,7 +261,37 @@ public class OrderOnlineSePay {
             }
 
             order.setPaid(true);
-            orderOnlineRepository.save(order);
+            OrderOnline newOrder=orderOnlineRepository.save(order);
+
+            //Tao lich su giao dich
+            TransactionHistory newHistory = new TransactionHistory();
+            newHistory.setCustomer(newOrder.getCustomer());
+            newHistory.setDate(newOrder.getOrderDate());
+            newHistory.setTime(LocalTime.now());
+            newHistory.setOrderOnline(newOrder);
+            if(newOrder.getTotalOrd()>=20000 && newOrder.getTotalOrd()<30000){
+                newHistory.setPlusPoint(2);
+            } else if(newOrder.getTotalOrd()>=30000 && newOrder.getTotalOrd()<40000){
+                newHistory.setPlusPoint(3);
+            }else if(newOrder.getTotalOrd()>=40000 && newOrder.getTotalOrd()<50000){
+                newHistory.setPlusPoint(4);
+            }else if(newOrder.getTotalOrd()>=50000 && newOrder.getTotalOrd()<60000){
+                newHistory.setPlusPoint(5);
+            }else if(newOrder.getTotalOrd()>=60000 &&newOrder.getTotalOrd()<70000) {
+                newHistory.setPlusPoint(6);
+            }else if(newOrder.getTotalOrd()>=70000 && newOrder.getTotalOrd()<80000) {
+                newHistory.setPlusPoint(7);
+            }else if(newOrder.getTotalOrd()>=80000 && newOrder.getTotalOrd()<90000) {
+                newHistory.setPlusPoint(8);
+            }else if(newOrder.getTotalOrd()>=90000&& newOrder.getTotalOrd()<100000 ) {
+                newHistory.setPlusPoint(9);
+            }else if(newOrder.getTotalOrd()>=100000) {
+                newHistory.setPlusPoint(10);
+            }
+            transactionHistoryRepository.save(newHistory);
+
+
+
             System.out.println("THANH TOAN THANH CONG ROI");
             return ResponseEntity.ok("Payment confirmed");
 

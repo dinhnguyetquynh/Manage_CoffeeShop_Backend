@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"ordDetails"}) // tránh vòng lặp
+@ToString(exclude = {"ordDetails","transactionHistory"}) // tránh vòng lặp
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class OrderOnline {
     @Id
@@ -33,4 +33,6 @@ public class OrderOnline {
     private Customer customer;
     @OneToMany(mappedBy = "orderOnline", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderOnlineDetail> ordDetails;
+    @OneToOne(mappedBy = "orderOnline",cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    private TransactionHistory transactionHistory;
 }
