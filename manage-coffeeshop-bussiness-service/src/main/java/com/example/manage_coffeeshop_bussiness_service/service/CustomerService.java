@@ -78,4 +78,11 @@ public class    CustomerService {
                 .bodyToMono(CustomerRes.class)
                 .block();
     }
+    public String getRank(int customerId){
+        return webClient.get()
+                .uri("/rank/{customerId}",customerId)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
 }
