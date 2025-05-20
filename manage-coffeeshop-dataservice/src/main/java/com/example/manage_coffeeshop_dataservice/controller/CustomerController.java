@@ -199,5 +199,12 @@ public class CustomerController {
         return res;
     }
 
+    @GetMapping("/rank/{customerId}")
+    public String getRank(@PathVariable int customerId){
+        Customer cus = customerRepository.findById(customerId).orElseThrow(()-> new RuntimeException("Customer not found"));
+        Rank levelRank = cus.getRank_level();
+        System.out.println("LEVEL RANK LA"+levelRank);
+        return String.valueOf(levelRank);
+    }
 
 }

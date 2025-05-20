@@ -79,4 +79,9 @@ public class CustomerController {
         CustomerRes updated = customerService.updateCustomer(id, req);
         return ResponseEntity.ok(updated);
     }
+
+    @GetMapping("/rank/{customerId}")
+    public String getRank(@PathVariable int customerId){
+        return customerService.getRank(customerId);
+    }
 }

@@ -25,9 +25,11 @@ public class TransactionHistory {
     private LocalTime time;
     private int plusPoint;
     @ToString.Exclude
+
     @OneToOne
     @JoinColumn(name="order_id")
     private OrderOnline orderOnline;
+
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name="customer_id")

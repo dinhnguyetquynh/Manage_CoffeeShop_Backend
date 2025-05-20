@@ -6,6 +6,7 @@ import com.example.manage_coffeeshop_dataservice.dto.request.ToppingReq;
 import com.example.manage_coffeeshop_dataservice.dto.respone.OrderOnlineDetailRes;
 import com.example.manage_coffeeshop_dataservice.dto.respone.OrderOnlineRes;
 import com.example.manage_coffeeshop_dataservice.dto.respone.ToppingRes;
+import com.example.manage_coffeeshop_dataservice.enums.Rank;
 import com.example.manage_coffeeshop_dataservice.mapper.OrderOnlineMapper2;
 import com.example.manage_coffeeshop_dataservice.model.*;
 import com.example.manage_coffeeshop_dataservice.repository.*;
@@ -43,6 +44,8 @@ public class OrderOnlineSePay {
 
     @Autowired
     private TransactionHistoryRepository transactionHistoryRepository;
+
+
 
     OrderOnlineMapper2 mapper = new OrderOnlineMapper2();
 
@@ -261,6 +264,18 @@ public class OrderOnlineSePay {
             }
 
             order.setPaid(true);
+            //set rank cho customer
+            Customer cus = customerRepository.findById(order.getCustomer().getCustomerId()).orElseThrow(()->new RuntimeException("Customer not found"));
+            if(cus.getAccumulatedPoint()<10){
+                cus.setRank_level(Rank.MEMBER);
+            }else if(cus.getAccumulatedPoint()>=20&&cus.getAccumulatedPoint()<30){
+                cus.setRank_level(Rank.VIP);
+            }else if(cus.getAccumulatedPoint()>=30){
+                cus.setRank_level(Rank.DIAMOND);
+            }
+            customerRepository.save(cus);
+            order.setCustomer(cus);
+
             OrderOnline newOrder=orderOnlineRepository.save(order);
 
             //Tao lich su giao dich
