@@ -2,6 +2,7 @@ package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.DiscountCodeRequest;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.DiscountCodeRes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,8 +14,11 @@ import java.util.List;
 public class DiscountService {
     private final WebClient webClient;
 
-    public DiscountService(WebClient.Builder builder) {
-        this.webClient = builder.baseUrl("http://localhost:8080/myapp/api/discounts").build();
+//    public DiscountService(WebClient.Builder builder) {
+//        this.webClient = builder.baseUrl("http://localhost:8080/myapp/api/discounts").build();
+//    }
+    public DiscountService(WebClient.Builder builder,@Value("${dataservice.base-url}") String baseUrl) {
+        this.webClient = builder.baseUrl(baseUrl+"/api/discounts").build();
     }
 
     public List<DiscountCodeRes> getAllDiscountCodes() {

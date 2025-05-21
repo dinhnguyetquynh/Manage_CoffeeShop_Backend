@@ -1,7 +1,74 @@
 
 services:
+  mariadb:
+    image: mariadb:10.6
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=my_coffeeshop
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - coffeeshop-network
+
   redis:
     image: redis:latest
     container_name: redis-jwt
     ports:
       - "6379:6379"
+    networks:
+      - coffeeshop-network
+
+  dataservice:
+    build:
+      context: ./manage-coffeeshop-dataservice
+    container_name: dataservice
+    depends_on:
+      - mariadb
+    environment:
+      - SERVER_PORT=8080
+      - CONTEXT_PATH=/myapp
+      - DB_URL=jdbc:mariadb://mariadb:3306/my_coffeeshop
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - BANK_NAME=TPBank
+      - BANK_ACCOUNT=04217466901
+    ports:
+      - "8080:8080"
+    networks:
+      - coffeeshop-network
+
+
+  businesservice:
+    build:
+      context: ./manage-coffeeshop-bussiness-service
+    container_name: businesservice
+    depends_on:
+      - dataservice
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod 
+      - SERVER_PORT=8081
+      - CONTEXT_PATH=/myapp
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SIGNER_KEY=gREG97Bjwq0euZszgVCKJbR5tuWG4ewlaw4Ejj0TGfhy2/werbHA2hx/cCxVKySU
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=dquynhd202@gmail.com
+      - MAIL_PASSWORD=swaqadkkcmjebapo
+      - BANK_NAME=TPBank
+      - BANK_ACCOUNT=04217466901
+    ports:
+      - "8081:8081"
+    networks:
+      - coffeeshop-network
+
+volumes:
+  mariadb_data:
+
+networks:
+  coffeeshop-network:
+

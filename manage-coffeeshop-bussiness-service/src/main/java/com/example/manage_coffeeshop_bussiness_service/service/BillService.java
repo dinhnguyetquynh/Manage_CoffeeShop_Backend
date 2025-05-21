@@ -2,6 +2,7 @@ package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.BillReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.BillRes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,8 +14,12 @@ import java.util.List;
 public class BillService {
     private final WebClient webClient;
 
-    public BillService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/bills").build();
+//    public BillService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/bills").build();
+//    }
+    public BillService(WebClient.Builder webClientBuilder,
+                       @Value("${dataservice.base-url}") String baseUrl){
+        this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/bills").build();
     }
 
     public List<BillRes> getAllBills() {

@@ -46,9 +46,14 @@ public class AuthenticationServiceCus {
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY ;
 
-    public AuthenticationServiceCus(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/customers").build();
+//    public AuthenticationServiceCus(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/customers").build();
+//    }
+    public AuthenticationServiceCus(WebClient.Builder webClientBuilder,
+                                 @Value("${dataservice.base-url}") String baseUrl){
+        this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/customers").build();
     }
+
 
     public AuthenticationRes authenticate(AuthenticationRequest req, HttpServletResponse response) {
         CustomerRes customer = findCustomerByAccount(req);
