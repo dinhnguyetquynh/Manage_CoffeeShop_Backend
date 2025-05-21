@@ -2,6 +2,7 @@ package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CategoryReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CategoryRes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,8 +15,12 @@ public class CategoryService {
     private final WebClient webClient;
 
 
-    public CategoryService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/categories").build();
+//    public CategoryService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/categories").build();
+//    }
+
+    public CategoryService(WebClient.Builder webClientBuilder, @Value("${dataservice.base-url}") String baseUrl) {
+        this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/categories").build();
     }
 
    public List<CategoryRes> getAllCategories() {

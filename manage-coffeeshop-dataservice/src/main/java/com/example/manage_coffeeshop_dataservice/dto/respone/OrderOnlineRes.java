@@ -19,6 +19,7 @@ public class OrderOnlineRes {
     private String transactionCode;
     private int customerId;
     private Boolean paid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate orderDate;
     private List<OrderOnlineDetailRes> ord_details;
 

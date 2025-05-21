@@ -24,24 +24,8 @@ public class TransactionHistoryController {
     private AuthenticationServiceCus authenCusService;
     @GetMapping("/{customerId}")
     public ResponseEntity<List<TransactionHistoryRes>> getListHistory(
-            @RequestHeader("Authorization") String authHeader,
             @PathVariable int customerId) {
-
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            System.out.println("Token: " + token);
-
-            String customerIdStr = authenCusService.extractCustomerIdFromToken(token);
-            int customerIdToken = Integer.parseInt(customerIdStr);
-
-            if (customerId == customerIdToken) {
-                List<TransactionHistoryRes> listRes = historyService.getAllTrHistory(customerId);
-                return ResponseEntity.ok(listRes);
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        List<TransactionHistoryRes> listRes = historyService.getAllTrHistory(customerId);
+        return ResponseEntity.ok(listRes);
     }
 }

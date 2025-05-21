@@ -2,6 +2,7 @@ package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.ProductReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.ProductRes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,10 +13,13 @@ import java.util.List;
 @Service
 public class ProductService {
     private final WebClient webClient;
-    public ProductService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/products").build();
-    }
-
+//    public ProductService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/products").build();
+//    }
+public ProductService(WebClient.Builder webClientBuilder,
+                       @Value("${dataservice.base-url}") String baseUrl) {
+    this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/products").build();
+}
     public String createProduct(ProductReq productReq) {
         return webClient.post()
                 .body(Mono.just(productReq),ProductReq.class)

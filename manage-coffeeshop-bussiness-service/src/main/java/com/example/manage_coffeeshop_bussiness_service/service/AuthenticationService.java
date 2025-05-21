@@ -48,8 +48,12 @@ public class AuthenticationService {
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY ;
 
-    public AuthenticationService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/employee").build();
+//    public AuthenticationService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/employee").build();
+//    }
+    public AuthenticationService(WebClient.Builder webClientBuilder,
+                       @Value("${dataservice.base-url}") String baseUrl){
+        this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/employee").build();
     }
 
 

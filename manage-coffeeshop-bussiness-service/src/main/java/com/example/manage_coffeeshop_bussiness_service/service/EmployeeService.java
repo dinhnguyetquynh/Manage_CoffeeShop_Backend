@@ -3,6 +3,7 @@ package com.example.manage_coffeeshop_bussiness_service.service;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.EmployeeReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.request.EmployeeUpdateReq;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.EmployeeRes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,8 +20,12 @@ public class EmployeeService {
     private final WebClient webClient;
 
 
-    public EmployeeService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/employee").build();
+//    public EmployeeService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/employee").build();
+//    }
+
+    public EmployeeService(WebClient.Builder webClientBuilder, @Value("${dataservice.base-url}") String baseUrl) {
+        this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/employee").build();
     }
 
     public EmployeeRes findEmployeeByAccount(String account){

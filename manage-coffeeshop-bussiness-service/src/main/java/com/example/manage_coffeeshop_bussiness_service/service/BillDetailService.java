@@ -4,6 +4,7 @@ import com.example.manage_coffeeshop_bussiness_service.dto.request.BillDetailReq
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.BillDetailRes;
 import com.example.manage_coffeeshop_bussiness_service.exception.AppException;
 import com.example.manage_coffeeshop_bussiness_service.exception.ErrorCode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,14 @@ import java.util.List;
 public class BillDetailService {
     private final WebClient webClient;
 
-    public BillDetailService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/bill-details").build();
+//    public BillDetailService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/bill-details").build();
+//    }
+    public BillDetailService(WebClient.Builder webClientBuilder,
+                             @Value("${dataservice.base-url}") String baseUrl){
+        this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/bill-details").build();
     }
+
 
     public List<BillDetailRes> getAllBillDetails() {
         return webClient.get()

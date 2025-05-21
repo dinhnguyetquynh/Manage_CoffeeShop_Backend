@@ -3,6 +3,7 @@ package com.example.manage_coffeeshop_bussiness_service.dto.respone;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -18,5 +19,7 @@ public class OrderOnlineRes {
     private String transactionCode;
     private int customerId;
     private Boolean paid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate orderDate;
     private List<OrderOnlineDetailRes> ord_details;
 }

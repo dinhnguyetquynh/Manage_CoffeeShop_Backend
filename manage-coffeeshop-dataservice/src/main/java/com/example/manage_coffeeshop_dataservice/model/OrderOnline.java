@@ -27,6 +27,7 @@ public class OrderOnline {
     private String paymentMethod;
     private String transactionCode;
     private Boolean paid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate orderDate;
     @ManyToOne
     @JoinColumn(name="customer_id")

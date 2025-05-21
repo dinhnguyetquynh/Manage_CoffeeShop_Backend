@@ -2,6 +2,7 @@ package com.example.manage_coffeeshop_bussiness_service.service;
 
 import com.example.manage_coffeeshop_bussiness_service.dto.request.CustomerRequest;
 import com.example.manage_coffeeshop_bussiness_service.dto.respone.CustomerRes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,8 +18,11 @@ public class    CustomerService {
     private final WebClient webClient;
 
 
-    public CustomerService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/customers").build();
+//    public CustomerService(WebClient.Builder webClientBuilder) {
+//        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/myapp/api/customers").build();
+//    }
+    public CustomerService(WebClient.Builder webClientBuilder,@Value("${dataservice.base-url}") String baseUrl) {
+        this.webClient = webClientBuilder.baseUrl(baseUrl+"/api/customers").build();
     }
 
     public CustomerRes createCustomer(CustomerRequest customerReq) {
