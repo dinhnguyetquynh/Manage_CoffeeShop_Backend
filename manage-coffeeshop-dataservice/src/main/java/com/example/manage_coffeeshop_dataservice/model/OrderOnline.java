@@ -27,6 +27,7 @@ public class OrderOnline {
     private String paymentMethod;
     private String transactionCode;
     private Boolean paid;
+    private Boolean statusDelivery;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate orderDate;
     @ManyToOne

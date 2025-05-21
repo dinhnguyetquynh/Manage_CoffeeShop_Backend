@@ -154,6 +154,7 @@ public class OrderOnlineSePay {
             order.setPaymentMethod(request.getPaymentMethod());
             order.setTransactionCode(request.getTransactionCode());
             order.setPaid(false);
+            order.setStatusDelivery(false);
             order.setOrderDate(LocalDate.now());
             //set diem cho khach hang
             if(order.getTotalOrd()>=20000 && order.getTotalOrd()<30000){
