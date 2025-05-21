@@ -330,4 +330,29 @@ public class OrderOnlineSePay {
         OrderOnlineRes orderRes = mapper.toOnlineRes(ordFounded);
         return orderRes;
     }
+
+    @GetMapping("/notYetDelivery")
+    public List<OrderOnlineRes> getOrderByStatus(){
+        List<OrderOnline> listOrd = orderOnlineRepository.findAll();
+        List<OrderOnlineRes> listOrdRes = new ArrayList<>();
+        for(OrderOnline ordOnl:listOrd){
+            if(!ordOnl.getStatusDelivery()){
+                OrderOnlineRes ordRes = mapper.toOnlineRes(ordOnl);
+                listOrdRes.add(ordRes);
+            }
+        }
+        return listOrdRes;
+    }
+
+    @PutMapping("/{orderId}")
+    public boolean updateOrderStatusToDelivered(@PathVariable int orderId) {
+        Optional<OrderOnline> optionalOrder = orderOnlineRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            OrderOnline order = optionalOrder.get();
+            order.setStatusDelivery(true);
+            orderOnlineRepository.save(order);
+            return true;
+        }
+        return false;
+    }
 }

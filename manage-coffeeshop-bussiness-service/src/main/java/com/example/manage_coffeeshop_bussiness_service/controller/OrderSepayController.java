@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -49,5 +50,16 @@ public class OrderSepayController {
         OrderOnlineRes ordRes = orderOnlineService.checkStatusOrder(id);
         return ResponseEntity.ok(ordRes);
     }
+
+    @GetMapping("/ordNYD")
+    public List<OrderOnlineRes> getOrderNotYetDelivery(){
+        return orderOnlineService.getOrdNotYetDelivery();
+    }
+
+    @PutMapping("/updateStatus/{id}")
+    public Boolean updateStatusDelivery(@PathVariable int id){
+        return orderOnlineService.updateOrderStatus(id);
+    }
+
 
 }

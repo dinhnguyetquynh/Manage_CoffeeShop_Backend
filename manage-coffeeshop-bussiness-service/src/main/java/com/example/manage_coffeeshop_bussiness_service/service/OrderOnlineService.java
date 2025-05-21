@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -35,6 +36,21 @@ public class OrderOnlineService {
                 .uri("/{id}", id)
                 .retrieve()
                 .bodyToMono(OrderOnlineRes.class)
+                .block();
+    }
+    public List<OrderOnlineRes> getOrdNotYetDelivery() {
+        return webClient.get()
+                .uri("/notYetDelivery")
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<OrderOnlineRes>>(){})
+                .block();
+    }
+
+    public boolean updateOrderStatus(int id){
+        return webClient.put()
+                .uri("/{orderId}",id)
+                .retrieve()
+                .bodyToMono(Boolean.class)
                 .block();
     }
 
