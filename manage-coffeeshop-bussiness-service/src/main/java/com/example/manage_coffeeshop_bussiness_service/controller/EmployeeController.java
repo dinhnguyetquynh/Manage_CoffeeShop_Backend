@@ -55,7 +55,7 @@ public class EmployeeController {
         }
         return emp;
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/{empId}")
     public EmployeeRes findEmployeeById(@PathVariable int empId){
         return employeeService.findEmployeeById(empId);
