@@ -182,9 +182,11 @@ public class AuthenticationService {
             String username = jwt.getJWTClaimsSet().getSubject();
             String role = (String) jwt.getJWTClaimsSet().getClaim("scope");
 
-            EmployeeRes emp = new EmployeeRes();
-            emp.setEmpAccount(username);
-            emp.setEmpRole(Role.valueOf(role));
+            AuthenticationRequest req = new AuthenticationRequest();
+            req.setUsername(username);
+            req.setPassword("");
+            EmployeeRes emp = findEmployeeByAccount(req);
+
 
             String newAccessToken =generateToken(emp,1); // 1 hour
             return AuthenticationRes.builder()

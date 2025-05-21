@@ -23,6 +23,7 @@ public class OrderOnlineMapper2 {
         orderRes.setCustomerId(ord.getCustomer().getCustomerId());
         orderRes.setPaid(ord.getPaid());
         orderRes.setOrderDate(ord.getOrderDate());
+        orderRes.setStatusDelivery(ord.getStatusDelivery());
 
         List<OrderOnlineDetailRes> listDetailRes = new ArrayList<>();
         for (OrderOnlineDetail ordDetail : ord.getOrdDetails()) {
