@@ -5,7 +5,7 @@ import java.util.List;
 @Data
 public class CartItemRes {
     private Long cartItemId;
-    private String productName;
+    private ProductRes product;
     private String size;
     private Double price;
     private Integer quantity;

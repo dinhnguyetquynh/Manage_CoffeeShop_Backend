@@ -34,16 +34,17 @@ public class CustomerController {
         for(Customer cus:lists){
             CustomerRes res = new CustomerRes();
             res.setCustomerId(cus.getCustomerId());
-            res.setCustomerName(cus.getCustomerName());
-            res.setCustomerPhone(cus.getCustomerPhone());
-            res.setGender(cus.getGender().getDisplayName());
-            res.setBirthDay(cus.getBirthday());
-            res.setEmail(cus.getEmail());
-            res.setAddress(cus.getAddress());
-            res.setAccountCus(cus.getAccountCus());
-            res.setPasswordCus(cus.getPasswordCus());
+
+            res.setCustomerName(cus.getCustomerName() != null ? cus.getCustomerName() : null);
+            res.setCustomerPhone(cus.getCustomerPhone() != null ? cus.getCustomerPhone() : null);
+            res.setGender(cus.getGender() != null ? cus.getGender().getDisplayName() : null);
+            res.setBirthDay(cus.getBirthday() != null ? cus.getBirthday() : null);
+            res.setEmail(cus.getEmail() != null ? cus.getEmail() : null);
+            res.setAddress(cus.getAddress() != null ? cus.getAddress() : null);
+            res.setAccountCus(cus.getAccountCus() != null ? cus.getAccountCus() : null);
+            res.setPasswordCus(cus.getPasswordCus() != null ? cus.getPasswordCus() : null);
             res.setAccumulatedPoint(cus.getAccumulatedPoint());
-            res.setRank(cus.getRank_level().name());
+            res.setRank(cus.getRank_level() != null ? cus.getRank_level().name() : null);
             listRes.add(res);
         }
         return listRes;

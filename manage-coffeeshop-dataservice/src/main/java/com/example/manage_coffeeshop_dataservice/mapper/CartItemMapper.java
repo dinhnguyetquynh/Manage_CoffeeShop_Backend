@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public interface CartItemMapper {
 
     @Mapping(source = "cartItemId", target = "cartItemId")
-    @Mapping(source = "product.productName", target = "productName")
+    @Mapping(source = "product", target = "product")
     @Mapping(source = "price", target = "price")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "size", target = "size")

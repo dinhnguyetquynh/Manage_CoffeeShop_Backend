@@ -1,5 +1,6 @@
 package com.example.manage_coffeeshop_dataservice.dto.request;
 
+import jakarta.validation.Valid;
 import lombok.Data;
 import java.util.List;
 
@@ -10,5 +11,6 @@ public class  CartItemRequest {
     private Integer quantity;
     private String sweet;
     private String ice;
+    @Valid
     private List<CartToppingRequest> toppings;
 }

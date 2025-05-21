@@ -11,20 +11,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/carts")
 public class CartController {
     @Autowired
     private CartRepository cartRepository;
-//    @Autowired private CartMapper cartMapper;
+    //    @Autowired private CartMapper cartMapper;
     @Autowired private CustomerRepository customerRepository;
     @Autowired private CartItemRepository cartItemRepository;
     @Autowired private ToppingRepository toppingRepository;
     @Autowired private ProductRepository productRepository;
-    @Autowired
-    private DiscountCodeRepository discountCodeRepository;
 
 
     @GetMapping("/{customerId}")
@@ -36,15 +34,14 @@ public class CartController {
                             .orElseThrow(() -> new RuntimeException("Customer not found")));
                     c.setTotal(0);
                     c.setQuantity(0);
-                    c.setShipCost(0);
-                    c.setDiscountCode(null);
+                    c.setShipCost(10000);
+                    c.setDiscountCode("");
                     c.setPaymentMethod("Bank Transfer");
                     return cartRepository.save(c);
                 });
         return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
 
-    @Transactional
     @PostMapping("/{customerId}/items")
     public ResponseEntity<CartRes> addItems(
             @PathVariable int customerId,
@@ -52,11 +49,12 @@ public class CartController {
 
         Cart cart = cartRepository.findByCustomerCustomerId(customerId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
-        // nếu lần đầu thêm item, set shipCost = 10000
-        if (cart.getCartItems().isEmpty()) {
-            cart.setShipCost(10000);
-        }
+
         for (CartItemRequest cri : req.getItems()) {
+            if (cri.getProductId() == null || cri.getQuantity() == null || cri.getQuantity() <= 0) {
+                continue; // Bỏ qua item không hợp lệ
+            }
+
             Product p = productRepository.findById(cri.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -67,42 +65,67 @@ public class CartController {
             ci.setQuantity(cri.getQuantity());
             ci.setSweet(cri.getSweet());
             ci.setIce(cri.getIce());
+            ci.setCartItemToppings(new ArrayList<>());
 
-            for (CartToppingRequest tr : cri.getToppings()) {
-                Topping t = toppingRepository.findByToppingName(tr.getToppingName())
-                        .orElseThrow(() -> new RuntimeException("Topping not found: " + tr.getToppingName()));
-                CartItemTopping cit = new CartItemTopping(ci, t, tr.getQuantity());
-                ci.getCartItemToppings().add(cit);
+            System.out.println("Cart controller ok 1");
+
+            // Xử lý toppings nếu có
+            if (cri.getToppings() != null) {
+                for (CartToppingRequest tr : cri.getToppings()) {
+                    if (tr.getToppingName() == null || tr.getQuantity() == null || tr.getQuantity() <= 0) {
+                        continue; // Bỏ qua topping không hợp lệ
+                    }
+
+                    Topping t = toppingRepository.findByToppingName(tr.getToppingName())
+                            .orElseThrow(() -> new RuntimeException("Topping not found: " + tr.getToppingName()));
+
+                    CartItemTopping cit = new CartItemTopping(ci, t, tr.getQuantity());
+                    ci.getCartItemToppings().add(cit);
+                }
             }
+            System.out.println("Cart controller ok 2");
 
-            // compute price: product + sum(toppingPrice * toppingQty) times itemQty
-            double base = p.getProductPrice() * cri.getQuantity();
+            // Tính giá tiền sản phẩm: giá sản phẩm + tổng topping × số lượng
+            int itemQty = cri.getQuantity();
+            double base = p.getProductPrice() * itemQty;
             double toppingSum = ci.getCartItemToppings().stream()
-                    .mapToDouble(cit -> cit.getTopping().getToppingPrice() * cit.getQuantity() * cri.getQuantity())
+                    .mapToDouble(cit -> cit.getTopping().getToppingPrice() * cit.getQuantity() * itemQty)
                     .sum();
             ci.setPrice(base + toppingSum);
 
             cart.getCartItems().add(ci);
         }
-
-        // Recalculate cart totals
-        recalculateCart(cart, req.getDiscountCode(), req.getPaymentMethod());
-        Cart saved = cartRepository.save(cart);
-        return ResponseEntity.ok(CartRes.fromEntity(saved));
+        // Tính lại tổng số lượng và tổng giá
+        int qty = cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum();
+        double sum = cart.getCartItems().stream()
+                .mapToDouble(ci -> ci.getPrice() != null ? ci.getPrice() : 0.0)
+                .sum();
+        cart.setQuantity(qty);
+        cart.setTotal(sum + cart.getShipCost());
+        if (req.getDiscountCode() != null) {
+            cart.setDiscountCode(req.getDiscountCode());
+        }
+        if (req.getPaymentMethod() != null) {
+            cart.setPaymentMethod(req.getPaymentMethod());
+        }
+        cart = cartRepository.save(cart);
+        System.out.println(cart);
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
-    @Transactional
+
+
+
     @PutMapping("/{customerId}")
     public ResponseEntity<CartRes> updateCart(@PathVariable int customerId,
                                               @RequestBody CartRequest req) {
         Cart cart = cartRepository.findByCustomerCustomerId(customerId)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
-
-        recalculateCart(cart, req.getDiscountCode(), req.getPaymentMethod());
-        Cart saved = cartRepository.save(cart);
-        return ResponseEntity.ok(CartRes.fromEntity(saved));
+        cart.setDiscountCode(req.getDiscountCode());
+        cart.setPaymentMethod(req.getPaymentMethod());
+        cart = cartRepository.save(cart);
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
 
-    @Transactional
     @PutMapping("/{customerId}/items/{itemId}")
     public ResponseEntity<CartRes> updateCartItem(
             @PathVariable int customerId,
@@ -141,56 +164,21 @@ public class CartController {
                 .sum();
         item.setPrice(base + toppingSum);
 
-        recalculateCart(cart, cart.getDiscountCode(), cart.getPaymentMethod());
-        Cart saved = cartRepository.save(cart);
-        return ResponseEntity.ok(CartRes.fromEntity(saved));
+        // 5) Save cart mới
+        cartRepository.save(cart);
+
+        // 6) Trả về CartRes
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
 
-    @Transactional
+
     @DeleteMapping("/{customerId}/items/{itemId}")
     public ResponseEntity<CartRes> deleteCartItem(
             @PathVariable int customerId,
             @PathVariable Long itemId) {
         cartItemRepository.deleteById(itemId);
-
-        Cart cart = cartRepository.findByCustomerCustomerId(customerId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
-
-        recalculateCart(cart, cart.getDiscountCode(), cart.getPaymentMethod());
-        Cart saved = cartRepository.save(cart);
-        return ResponseEntity.ok(CartRes.fromEntity(saved));
-    }
-    private void recalculateCart(Cart cart, String code, String paymentMethod) {
-        // nếu giỏ đã trống, shipCost về 0
-        if (cart.getCartItems().isEmpty()) {
-            cart.setShipCost(0);
-        }
-
-        double sumItems = cart.getCartItems().stream()
-                .mapToDouble(CartItem::getPrice)
-                .sum();
-
-        double discountAmount = 0;
-        if (code != null && !code.isBlank()) {
-            DiscountCode dc = discountCodeRepository.findByDiscountCodeName(code)
-                    .orElseThrow(() -> new RuntimeException("Invalid discount code"));
-            LocalDate today = LocalDate.now();
-            if (today.isBefore(dc.getValidFrom()) || today.isAfter(dc.getValidUntil()))
-                throw new RuntimeException("Discount code not valid today");
-            if (dc.getUsageLimit() <= 0)
-                throw new RuntimeException("Discount code usage limit exceeded");
-
-            discountAmount = sumItems * (dc.getPercentOff() / 100.0);
-            dc.setUsageLimit(dc.getUsageLimit() - 1);
-            discountCodeRepository.save(dc);
-            cart.setDiscountCode(dc.getDiscountCodeName());
-        } else {
-            cart.setDiscountCode(null);
-        }
-
-        cart.setTotal(sumItems - discountAmount + cart.getShipCost());
-        cart.setQuantity(cart.getCartItems().stream().mapToInt(CartItem::getQuantity).sum());
-        cart.setPaymentMethod(paymentMethod);
+        Cart cart = cartRepository.findByCustomerCustomerId(customerId).get();
+        return ResponseEntity.ok(CartRes.fromEntity(cart));
     }
 
 
