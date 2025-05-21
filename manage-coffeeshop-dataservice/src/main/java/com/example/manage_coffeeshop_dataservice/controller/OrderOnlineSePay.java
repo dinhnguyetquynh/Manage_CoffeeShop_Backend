@@ -336,7 +336,7 @@ public class OrderOnlineSePay {
         List<OrderOnline> listOrd = orderOnlineRepository.findAll();
         List<OrderOnlineRes> listOrdRes = new ArrayList<>();
         for(OrderOnline ordOnl:listOrd){
-            if(!ordOnl.getStatusDelivery()){
+            if(ordOnl.getPaid()&&!ordOnl.getStatusDelivery()){
                 OrderOnlineRes ordRes = mapper.toOnlineRes(ordOnl);
                 listOrdRes.add(ordRes);
             }

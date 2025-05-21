@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"cartItems"}) // tránh vòng lặp
+@ToString(exclude = {"cartItems","customer"}) // tránh vòng lặp
 @EqualsAndHashCode(exclude = {"cartItems"}) // tránh vòng lặp
 public class Cart {
     @Id
