@@ -1,2 +1,11 @@
 .env
 docker-compose.yml
+BANK_ACCOUNT 
+DB_PASSWORD 
+MAIL_PASSWORD 
+MAIL_USERNAME 
+MYSQL_ROOT_PASSWORD 
+jwt.signerKey 
+spring.mail.password 
+spring.mail.username 
+replacements.txt 
