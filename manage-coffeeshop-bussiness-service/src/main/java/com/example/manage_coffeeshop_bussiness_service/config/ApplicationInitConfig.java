@@ -19,8 +19,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 @Slf4j
 public class ApplicationInitConfig {
+   // Lấy từ ENV (đã map ở application-*.properties)
+    @Value("${app.admin.init.username:admin}")
+    private String initUsername;
 
-    @Bean
+    @Value("${app.admin.init.password:}")
+    private String initPassword;
+
+        @Bean
     ApplicationRunner applicationRunner(EmployeeService employeeService){
         return args -> {
             String account ="admin";
@@ -29,8 +35,8 @@ public class ApplicationInitConfig {
                 emp.setEmpName("admin");
                 emp.setEmpYearOfBirth(2000);
                 emp.setEmpPhone("0123456789");
-                emp.setEmpAccount("admin");
-                emp.setEmpPassword("admin");
+                emp.setEmpAccount(initUsername);
+                emp.setEmpPassword(initPassword);
                 emp.setEmpRole(Role.ADMIN);
 
                 employeeService.createEmployee(emp);
